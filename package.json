@@ -1,6 +1,6 @@
 {
-  "name": "studentapp",
-  "version": "0.0.0",
+  "name": "rainbow-backend-server",
+  "version": "1.0.0",
   "private": true,
   "scripts": {
     "start": "babel-node ./bin/www"
@@ -16,6 +16,7 @@
     "express": "^4.16.3",
     "jade": "~1.11.0",
     "morgan": "^1.9.1",
+    "rainbow-node-sdk": "^1.67.1",
     "serve-favicon": "~2.4.2"
   },
   "devDependencies": {

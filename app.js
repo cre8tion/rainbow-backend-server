@@ -11,6 +11,12 @@ var square = require('./routes/square').default;
 var index = require('./routes/index');
 var users = require('./routes/users');
 
+let RainbowSDK = require("rainbow-node-sdk");
+import options from "./env"
+
+let rainbowSDK = new RainbowSDK(options);
+
+
 var app = express();
 
 // view engine setup

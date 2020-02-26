@@ -1,6 +1,15 @@
 # Rainbow API Backend
 
-## Step by step
+## Setup
+- Make sure you have `nodejs`, `npm` installed in your machine.
+- Run `npm install` in root directory
+- Configure your `env.js` file from `empty_env.js`
+- Run `node app.js` to start the server
+- To be continued...
+
+
+
+## Legacy Template README
 - Make sure you have node env setup on your local machine
 - As per the instruction you have to implement a post endpoint `/square`
 - Go to `app.js` in this template and you will find `/square` endpoint refers to implementation in `./routes/square` file
