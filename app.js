@@ -19,6 +19,14 @@ let rainbowSDK = new RainbowSDK(options);
 
 var app = express();
 
+/* db router */
+const dbRouter = require('./db/dbRoutes.js');
+app.use('/db', dbRouter);
+
+app.use('/db/test', (req,res,next) => {
+  res.send("helloworld");
+})
+
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
@@ -50,6 +58,15 @@ app.use(function (err, req, res, next) {
   // render the error page
   res.status(err.status || 500);
   res.render('error');
+});
+
+app.use('/db/test', (req,res,next) => {
+  res.send("ping");
+})
+
+/* Set up to listen for db api */
+app.listen(process.env.PORT || '3000', () => {
+  console.log(`Server is running on port: ${process.env.PORT || '3000'}`);
 });
 
 module.exports = app;

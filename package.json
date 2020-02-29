@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "start": "babel-node ./bin/www"
+    "start": "babel-node ./bin/www",
+    "devdb": "npx nodemon ./app.js -w db -w app.js"
   },
   "dependencies": {
     "axios": "^0.18.1",
@@ -16,10 +17,12 @@
     "express": "^4.16.3",
     "jade": "~1.11.0",
     "morgan": "^1.9.1",
+    "mysql": "^2.18.1",
     "rainbow-node-sdk": "^1.67.1",
     "serve-favicon": "~2.4.2"
   },
   "devDependencies": {
-    "babel-register": "^6.26.0"
+    "babel-register": "^6.26.0",
+    "nodemon": "^2.0.2"
   }
 }
