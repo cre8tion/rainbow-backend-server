@@ -40,4 +40,4 @@ package-lock.json
 .idea/
 
 # Environment Files
-env.js
+.env

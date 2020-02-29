@@ -1,22 +1,17 @@
-let options;
+require('dotenv').config();
 
-/**
- * This empty env file serves as a template to make env.js file with your own credentials
- * DO NOT COMMIT YOUR env.js file after doing so
- */
-
-export default options = {
+let rainbowSDK_options = {
   rainbow: {
     host: "sandbox" // Using Sandbox Testing
   },
   credentials: {
-    login: "", // To replace by your developer credendials
-    password: "" // To replace by your developer credentials
+    login: process.env.DEV_LOGIN,
+    password: process.env.DEV_PASSWORD
   },
   // Application identifier
   application: {
-    appID: "", // To replace by your application ID
-    appSecret: "" // To replace by your application secret
+    appID: process.env.APPLICATION_ID,
+    appSecret: process.env.APPLICATION_SECRET
   },
   // Logs options
   logs: {
@@ -24,7 +19,7 @@ export default options = {
     enableFileLogs: false,
     "color": true,
     "level": 'debug',
-    "customLabel": "vincent01",
+    "customLabel": "inoop",
     "system-dev": {
       "internals": false,
       "http": false,
@@ -43,3 +38,9 @@ export default options = {
     sendReadReceipt: true
   }
 };
+
+
+
+module.exports = {
+  options: rainbowSDK_options
+}

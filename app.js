@@ -1,5 +1,4 @@
-
-require('babel-register')
+require('babel-register');
 var express = require('express');
 var path = require('path');
 var favicon = require('serve-favicon');
@@ -12,10 +11,7 @@ var index = require('./routes/index');
 var users = require('./routes/users');
 
 let RainbowSDK = require("rainbow-node-sdk");
-import options from "./env"
-
-let rainbowSDK = new RainbowSDK(options);
-
+const {options} = require('./config/config');
 
 var app = express();
 
@@ -25,7 +21,7 @@ app.use('/db', dbRouter);
 
 app.use('/db/test', (req,res,next) => {
   res.send("helloworld");
-})
+});
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -65,8 +61,11 @@ app.use('/db/test', (req,res,next) => {
 })
 
 /* Set up to listen for db api */
-app.listen(process.env.PORT || '3000', () => {
-  console.log(`Server is running on port: ${process.env.PORT || '3000'}`);
+app.listen(process.env.DBPORT || '3000', () => {
+  console.log(`Server is running on port: ${process.env.DBPORT || '3000'}`);
 });
+
+let rainbowSDK = new RainbowSDK(options);
+rainbowSDK.start();
 
 module.exports = app;

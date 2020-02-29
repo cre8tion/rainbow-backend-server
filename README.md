@@ -3,7 +3,7 @@
 ## Setup
 - Make sure you have `nodejs`, `npm` installed in your machine.
 - Run `npm install` in root directory
-- Configure your `env.js` file from `empty_env.js`
+- Configure your `.env` file from `.env.example`
 - Run `node app.js` to start the server
 - To be continued...
 
