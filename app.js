@@ -56,10 +56,6 @@ app.use(function (err, req, res, next) {
   res.render('error');
 });
 
-app.use('/db/test', (req,res,next) => {
-  res.send("ping");
-})
-
 /* Set up to listen for db api */
 app.listen(process.env.DBPORT || '3000', () => {
   console.log(`Server is running on port: ${process.env.DBPORT || '3000'}`);
