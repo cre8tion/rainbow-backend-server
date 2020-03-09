@@ -26,10 +26,9 @@ let agentInfo = () => {
 
 let joinAllTables = () => {
     return new Promise((resolve, reject) => {
-         pool.query(`SELECT * 
-                    FROM agent 
-                        LEFT JOIN languages USING(agent_id)
-                        LEFT JOIN skills USING(agent_id);`, (err, results) => {
+         pool.query(`SELECT * FROM agent 
+                    LEFT JOIN languages USING(agent_id)
+                    LEFT JOIN skills USING(agent_id);`, (err, results) => {
             if(err) {
                 console.log('err');
                 return reject(err);
@@ -40,12 +39,13 @@ let joinAllTables = () => {
     });
 };
 
-let query = (queryTable, keyTerm) => {
+let query = (keyTerm) => {
     return new Promise((resolve, reject) => {
-        pool.query(`SELECT * 
-                   FROM agent 
-                       LEFT JOIN ${queryTable} USING(agent_id)
-                       WHERE ${queryTable}.${keyTerm} = 1;`, (err, results) => {
+        pool.query(`SELECT * FROM 
+                        (SELECT * FROM agent 
+                        LEFT JOIN languages USING(agent_id)
+                        LEFT JOIN skills USING(agent_id)) A
+                    WHERE ${keyTerm} = 1;`, (err, results) => {
            if(err) {
                console.log('err');
                return reject(err);
@@ -56,13 +56,6 @@ let query = (queryTable, keyTerm) => {
    });
 }
 
-let querySkills = (keyTerm) => {
-    return query("skills",keyTerm);
-};
-
-let queryLanguage = (keyTerm) => {
-    return query("languages",keyTerm);
-};
 
 /* Create Methods */
 
@@ -121,14 +114,71 @@ let initialiseAgentDetails = (rainbow_id, details) => {
     })
 }
 
+/* UPDATE METHODS */
+
+let updateAgentDetails = (toBeChangedJson) => {
+    return new Promise((resolve, reject) => {
+
+        var overallArray = [];
+        var agentUpdate = ``;
+        if (toBeChangedJson.hasOwnProperty("name")) {
+            agentUpdate =   `UPDATE agent
+                            SET name = '${toBeChangedJson.name}'
+                            WHERE (agent_id = '${toBeChangedJson.rainbow_id}');`;
+        }
+        overallArray.push(agentUpdate);
+
+        if (toBeChangedJson.hasOwnProperty("details")) {
+            var rootDir = toBeChangedJson.details;
+            for (var key in rootDir) {
+                var currentUpdateArray = [];
+                console.log(rootDir[key]);
+                for (var innerKey in rootDir[key]) {
+                    currentUpdateArray.push(`${innerKey} = ${rootDir[key][innerKey]}`);
+                }
+                let currentUpdate = `UPDATE ${key} SET ` + currentUpdateArray.join(', ') +` WHERE (agent_id = '${toBeChangedJson.rainbow_id}');`;
+                overallArray.push(currentUpdate);
+            }
+        }
+        
+        pool.query(`${overallArray.join('\n')}`, 
+                    (err, results) => {
+                        if(err) {
+                            console.log('err');
+                            return reject(err);
+                        }
+                        console.log(results);
+                        return resolve(results);
+                    });
+    })
+}
+
+/* DELETE method */
+let deleteAgent = (rainbow_id) => {
+    return new Promise((resolve, reject) => {
+        pool.query(`DELETE FROM languages WHERE (agent_id = '${rainbow_id}');
+                    DELETE FROM skills WHERE (agent_id = '${rainbow_id}');
+                    DELETE FROM agent WHERE (agent_id = '${rainbow_id}');`, 
+                    (err, results) => {
+                        if(err) {
+                            console.log('err');
+                            return reject(err);
+                        }
+                        console.log(results);
+                        return resolve(results);
+                    });
+    })
+}
+
+
 
 
 module.exports = {
     agentInfo,
     joinAllTables,
-    querySkills,
-    queryLanguage,
+    query,
     addAgent,
-    initialiseAgentDetails
-
+    initialiseAgentDetails,
+    updateAgentDetails,
+    deleteAgent
 };
