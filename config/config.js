@@ -43,4 +43,4 @@ let rainbowSDK_options = {
 
 module.exports = {
   options: rainbowSDK_options
-}
+};

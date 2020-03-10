@@ -5,13 +5,10 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+
 var square = require('./routes/square').default;
-
+var api = require('./routes/api');
 var index = require('./routes/index');
-var users = require('./routes/users');
-
-let RainbowSDK = require("rainbow-node-sdk");
-const {options} = require('./config/config');
 
 var app = express();
 
@@ -36,7 +33,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', index);
-app.use('/square', square)
+app.use('/api', api);
 
 // catch 404 and forward to error handler`
 app.use(function (req, res, next) {
@@ -61,7 +58,5 @@ app.listen(process.env.DBPORT || '3000', () => {
   console.log(`Server is running on port: ${process.env.DBPORT || '3000'}`);
 });
 
-let rainbowSDK = new RainbowSDK(options);
-rainbowSDK.start();
 
 module.exports = app;

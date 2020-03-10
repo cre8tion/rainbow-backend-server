@@ -64,7 +64,7 @@ router.get('/agent/:rainbow_id', async (req, res, next) => {
         let results = await db.joinAllTables();
         let jsonToSend;
         for(var i = 0; i < results.length; i++) {
-            if (req.params.rainbow_id == results[i].agent_id) {
+            if (req.params.rainbow_id === results[i].agent_id) {
                 jsonToSend = results[i]
                 break;
             }
@@ -81,7 +81,7 @@ router.get('/agent/:rainbow_id', async (req, res, next) => {
  * Request body JSON example
     {
         "rainbow_id": "fake_rainbow_id4",
-        "name": "Jacob Wijaya", 
+        "name": "Jacob Wijaya",
         "details": {
             "languages": {
                 "english": 1,
@@ -94,14 +94,14 @@ router.get('/agent/:rainbow_id', async (req, res, next) => {
                 "fraud": 1
             }
         }
-    } 
+    }
     */
 router.post('/add', async (req, res, next) => {
     try {
         let rainbow_id = req.body.rainbow_id;
         let name = req.body.name;
         let details = req.body.details;
-        
+
         // Create agent's record
         await db.addAgent(rainbow_id, name);
         // To initialise the Agent's languages and skills to be 0 if not specified in details JSON
@@ -120,7 +120,7 @@ router.post('/add', async (req, res, next) => {
  * Request Body JSON example (All except rainbow_id are optional)
     {
     "rainbow_id": "fake_rainbow_id4",
-    "name": "Jacob Wijaya", 
+    "name": "Jacob Wijaya",
     "details": {
     	"languages": {
     		"english": 1,
@@ -138,10 +138,10 @@ router.post('/add', async (req, res, next) => {
 router.put('/update', async (req, res, next) => {
     try {
         let toBeChangedJson = req.body;
-        
+
         let results = await db.updateAgentDetails(toBeChangedJson);
-        
-        
+
+
         res.json(results);      // TODO: We should be returning something else
 
 
@@ -156,7 +156,7 @@ router.delete('/delete/agent/:rainbow_id', async (req, res, next) => {
     try {
         let rainbow_id = req.params.rainbow_id;
         let results = await db.deleteAgent(rainbow_id);
-        
+
         res.json(results);      // TODO: We should be returning something else
     } catch(e) {
         console.log(e);
