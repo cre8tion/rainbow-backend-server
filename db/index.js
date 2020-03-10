@@ -2,13 +2,15 @@ const mysql = require('mysql');
 
 const pool = mysql.createPool({
     connectionLimit: 10,
-    password: 'Sutd1234',
-    user:'root',
-    database:'innop',
-    host: 'localhost',
+    password: 'b1b6fc44',
+    user:'bdf76656acdd9a',
+    database:'heroku_c93ca8b3152014d',
+    host: 'us-cdbr-iron-east-04.cleardb.net',
     port: '3306',
     multipleStatements: true
 });
+
+
 
 /* QUERYING METHODS */
 let agentInfo = () => {
@@ -59,10 +61,12 @@ let query = (keyTerm) => {
 
 /* Create Methods */
 
-let addAgent = (rainbow_id, name) => {
+let addAgent = (rainbow_id, personalInfo) => {
     return new Promise((resolve, reject) => {
-        pool.query(`INSERT INTO agent(agent_id, name)
-                    VALUES ("${rainbow_id}", "${name}");`, (err, results) => {
+        
+        pool.query(`INSERT INTO agent(agent_id, firstname, lastname, email)
+                    VALUES ("${rainbow_id}", "${personalInfo.firstname}", "${personalInfo.lastname}", "${personalInfo.email}");`, 
+                    (err, results) => {
                         if(err) {
                             console.log('err');
                             return reject(err);
@@ -120,13 +124,15 @@ let updateAgentDetails = (toBeChangedJson) => {
     return new Promise((resolve, reject) => {
 
         var overallArray = [];
-        var agentUpdate = ``;
-        if (toBeChangedJson.hasOwnProperty("name")) {
-            agentUpdate =   `UPDATE agent
-                            SET name = '${toBeChangedJson.name}'
-                            WHERE (agent_id = '${toBeChangedJson.rainbow_id}');`;
+        
+        if (toBeChangedJson.hasOwnProperty("personalInfo")) {
+            var currentUpdateArray = [];
+            for (var key in toBeChangedJson.personalInfo) {
+                currentUpdateArray.push(`${innerKey} = ${rootDir[key][innerKey]}`);
+            }
+            let currentUpdate = `UPDATE agent SET ` + currentUpdateArray.join(', ') +` WHERE (agent_id = '${toBeChangedJson.rainbow_id}');`;
+            overallArray.push(currentUpdate);
         }
-        overallArray.push(agentUpdate);
 
         if (toBeChangedJson.hasOwnProperty("details")) {
             var rootDir = toBeChangedJson.details;

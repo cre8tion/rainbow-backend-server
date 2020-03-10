@@ -99,11 +99,11 @@ router.get('/agent/:rainbow_id', async (req, res, next) => {
 router.post('/add', async (req, res, next) => {
     try {
         let rainbow_id = req.body.rainbow_id;
-        let name = req.body.name;
+        let personalInfo = req.body.personalInfo;
         let details = req.body.details;
 
         // Create agent's record
-        await db.addAgent(rainbow_id, name);
+        await db.addAgent(rainbow_id, personalInfo);
         // To initialise the Agent's languages and skills to be 0 if not specified in details JSON
         let results = await db.initialiseAgentDetails(rainbow_id, details);
 
