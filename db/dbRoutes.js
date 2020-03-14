@@ -49,11 +49,24 @@ router.get('/all', async (req, res, next) => {
         // res.json(results);
     } catch(e) {
         console.log(e);
-        next(new DefaultError());
+        next(new DefaultError(e.sqlMessage));
     }
 })
 
-
+/* AVAILABILITY METHODS */
+router.put('/agent/:rainbow_id/availability/:availability', async(req, res, next) => {
+    try {
+        console.log("entered here");
+        let results = await db.changeAvailability(req.params.rainbow_id, req.params.availability);
+        console.log(results);
+        res.locals.results = new SuccessHolder();
+        next();
+    } catch(e) {
+        console.log(e);
+        let error = new ErrorHolder(404, e.sqlMessage);
+        next(error);
+    }
+});
 
 
 /* ADMINISTRATIVE FUNCTIONS:
@@ -82,7 +95,7 @@ router.get('/agent/:rainbow_id', async (req, res, next) => {
         else next(new ErrorHolder(404,"rainbow_id " + req.params.rainbow_id + " does not exits."));
     } catch(e) {
         console.log(e);
-        let error = new DefaultError();
+        let error = new ErrorHolder(404, e.sqlMessage);
         next(error);
     }
 });

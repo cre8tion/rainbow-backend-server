@@ -163,6 +163,20 @@ let updateAgentDetails = (toBeChangedJson) => {
     })
 }
 
+let changeAvailability = (rainbow_id, availability) => {
+    return new Promise((resolve, reject) => {
+        pool.query(`UPDATE agent SET availability = ${availability} WHERE agent_id = "${rainbow_id}";`,
+                    (err, results) => {
+                        if (err) {
+                            console.log('err');
+                            return reject(err);
+                        }
+                        console.log(results);
+                        return resolve(results);
+                    });
+    })
+}
+
 /* DELETE method */
 let deleteAgent = (rainbow_id) => {
     return new Promise((resolve, reject) => {
@@ -190,5 +204,6 @@ module.exports = {
     addAgent,
     initialiseAgentDetails,
     updateAgentDetails,
-    deleteAgent
+    deleteAgent,
+    changeAvailability
 };

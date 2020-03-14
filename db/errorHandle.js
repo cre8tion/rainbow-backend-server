@@ -28,8 +28,8 @@ class ErrorHolder extends Error {
     }
 }
 class DefaultError extends ErrorHolder {
-    constructor() {
-        super(500, "Connection to SQl Database might be broken.");
+    constructor(message) {
+        super(500, message);
     }
 }
 const errorHandler = (err, res) => {
