@@ -1,7 +1,7 @@
 const express = require('express');
 // const {agentInfo, joinAllTables, queryLanguage, querySkills,} = require('../db');
 import db from '../db';
-const {handler, ErrorHandler, DefaultError} = require('./errorHandle');
+const {responseHandler, errorHandler, ErrorHolder, DefaultError, SuccessHolder} = require('./errorHandle');
 
 const router = express.Router();
 
@@ -31,7 +31,9 @@ router.get('/all/:keyTerm', async (req, res, next) => {
 
     try{
         let results = await db.query(req.params.keyTerm);
-        res.json(results);
+        res.locals.results = new SuccessHolder(results);
+        next();
+        // res.json(results);
     } catch(e) {
         console.log(e);
         res.sendStatus(500);
@@ -41,7 +43,10 @@ router.get('/all/:keyTerm', async (req, res, next) => {
 router.get('/all', async (req, res, next) => {
     try {
         let results = await db.joinAllTables();
-        res.json(results);
+        res.locals.results = new SuccessHolder(results);
+        next();
+        
+        // res.json(results);
     } catch(e) {
         console.log(e);
         next(new DefaultError());
@@ -69,11 +74,16 @@ router.get('/agent/:rainbow_id', async (req, res, next) => {
                 break;
             }
         }
-        if (jsonToSend != null) res.json(jsonToSend);
-        else next(new ErrorHandler(404,"rainbow_id " + req.params.rainbow_id + " does not exits."));
+        if (jsonToSend != null) {
+            res.locals.results = new SuccessHolder(results);
+            next();
+            // res.json(jsonToSend);
+        }
+        else next(new ErrorHolder(404,"rainbow_id " + req.params.rainbow_id + " does not exits."));
     } catch(e) {
         console.log(e);
-        res.sendStatus(500);
+        let error = new DefaultError();
+        next(error);
     }
 });
 
@@ -105,12 +115,14 @@ router.post('/add', async (req, res, next) => {
         // Create agent's record
         await db.addAgent(rainbow_id, personalInfo);
         // To initialise the Agent's languages and skills to be 0 if not specified in details JSON
-        let results = await db.initialiseAgentDetails(rainbow_id, details);
+        await db.initialiseAgentDetails(rainbow_id, details);
+        res.locals.results = new SuccessHolder();
+        next();
 
-        res.json(results);      // TODO: We should be returning something else
+        // res.json(results);      // TODO: We should be returning something else
     } catch(e) {
         console.log(e);
-        let error = new ErrorHandler(400, e.sqlMessage);
+        let error = new ErrorHolder(400, e.sqlMessage);
         next(error);
     }
 })
@@ -139,15 +151,17 @@ router.put('/update', async (req, res, next) => {
     try {
         let toBeChangedJson = req.body;
 
-        let results = await db.updateAgentDetails(toBeChangedJson);
+        await db.updateAgentDetails(toBeChangedJson);
+        res.locals.results = new SuccessHolder();
+        next();
 
 
-        res.json(results);      // TODO: We should be returning something else
+        // res.json(results);      // TODO: We should be returning something else
 
 
     } catch(e) {
         console.log(e);
-        let error = new ErrorHandler(400, e.sqlMessage);
+        let error = new ErrorHolder(400, e.sqlMessage);
         next(error);
     }
 });
@@ -156,18 +170,25 @@ router.delete('/delete/agent/:rainbow_id', async (req, res, next) => {
     try {
         let rainbow_id = req.params.rainbow_id;
         let results = await db.deleteAgent(rainbow_id);
+        res.locals.results = new SuccessHolder();
+        next();
 
-        res.json(results);      // TODO: We should be returning something else
+        // res.json(results);      // TODO: We should be returning something else
     } catch(e) {
         console.log(e);
-        let error = new ErrorHandler(400, e.sqlMessage);
+        let error = new ErrorHolder(400, e.sqlMessage);
         next(error);
     }
 });
 
+/* SUCCESS RESPONSE HANDLING */
+router.use((req, res, next) => {
+    responseHandler(res.locals.results, res);
+});
 
+/* ERROR HANDLING */
 router.use((err, req, res, next) => {
-    handler(err,res);
+    errorHandler(err,res);
 });
 
 module.exports = router;
