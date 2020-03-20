@@ -47,6 +47,11 @@ rainbowSDK.events.on("rainbow_oncontactpresencechanged", (contact) => {
       "status": ''
   }
    */
+
+  // Update contact about its availability
+  // Awaiting for DB function to be created.
+
+
 });
 
 /* GET guest account. */
@@ -55,8 +60,11 @@ router.get('/v1/guest_creation', async function(req, res, next) {
     let json = await generateGuestAcc();
     return res.send(json);
   }catch (e) {
-    console.log(e);
-    return res.status(500).send(e.message);
+    return res.status(400).send({
+      "success": false,
+      "message": e.message,
+      "data": {}
+    })
   }
 });
 
@@ -65,11 +73,16 @@ router.post('/v1/agent_creation', async function(req, res, next) {
   try{
     const {userEmailAccount, userPassword, userFirstName, userLastName} = req.body;
     const { details } = req.body || {};
-    let json = await generateAgentAcc(userEmailAccount, userPassword, userFirstName, userLastName, details);
+    let user = await generateAgentAcc(userEmailAccount, userPassword, userFirstName, userLastName);
+    let json = await saveNewAgentToDB(user, details);
+
     return res.send(json);
   }catch (e) {
-    console.log(e);
-    return res.status(500).send(e.message);
+    return res.status(400).send({
+      "success": false,
+      "message": e.message,
+      "data": {}
+    })
   }
 });
 
@@ -90,30 +103,37 @@ async function generateGuestAcc(){
       "message": "Guest Account generated successfully",
       "data": {username: guest['loginEmail'], password: guest['password']}
     }
-  }catch (e) {
+  } catch (e) {
     console.log(e);
     throw new Error("Guest Account Creation Failed");
   }
-
 }
 
-async function generateAgentAcc(userEmailAccount, userPassword, userFirstName, userLastName, details){
+async function generateAgentAcc(userEmailAccount, userPassword, userFirstName, userLastName){
   try {
     let user = await rainbowSDK.admin.createUserInCompany(userEmailAccount, userPassword, userFirstName, userLastName);
     console.log(user);
+    return user;
 
+  } catch (e) {
+    console.log(e);
+    throw new Error("Agent Account Creation Failed");
+  }
+}
+
+async function saveNewAgentToDB(user, details){
+  try{
     await db.addAgent(user.id, user.displayName);
-
-    let results = await db.initialiseAgentDetails(user.id, details);
+    await db.initialiseAgentDetails(user.id, details);
 
     return {
       "success": true,
       "message": "Agent Account generated successfully",
       "data": {}
     }
-  }catch (e) {
+  } catch (e) {
     console.log(e);
-    throw new Error("Agent Account Creation Failed");
+    throw new Error("Agent Account Update to DB Failed");
   }
 }
 

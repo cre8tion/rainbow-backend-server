@@ -8,7 +8,8 @@
   "private": true,
   "scripts": {
     "start": "node ./bin/www",
-    "devdb": "npx nodemon ./app.js -w db -w app.js"
+    "devdb": "npx nodemon ./app.js -w db -w app.js",
+    "test": "jest"
   },
   "dependencies": {
     "axios": "^0.18.1",
@@ -28,6 +29,7 @@
   },
   "devDependencies": {
     "babel-register": "^6.26.0",
+    "jest": "^25.1.0",
     "nodemon": "^2.0.2"
   }
 }
