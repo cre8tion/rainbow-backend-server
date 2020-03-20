@@ -1,51 +1,61 @@
-
-class ErrorHandler extends Error {
+class SuccessHolder {
+    constructor(results, message, statusCode) {
+        if (message != null) {
+            this.statusCode = statusCode;
+            this.message = message;
+            this.results = results;
+        } else {
+            this.statusCode = 200;
+            this.message = "success";
+            this.results = results;
+        }
+    }
+    getJson() {
+        const dir = {
+            status: "success",
+            statusCode: this.statusCode,
+            message: this.message,
+            results: this.results
+        }
+        return dir;
+    }
+}
+class ErrorHolder extends Error {
     constructor(statusCode, message) {
         super();
         this.statusCode = statusCode;
         this.message = message;
     }
 }
-class DefaultError extends ErrorHandler {
-    constructor() {
-        super(500, "Connection to SQl Database might be broken.");
+class DefaultError extends ErrorHolder {
+    constructor(message) {
+        super(500, message);
     }
 }
-const handler = (err, res) => {
+const errorHandler = (err, res) => {
     const {statusCode, message} = err;
     res.status(statusCode).json({
         status: "error",
         statusCode,
         message
-    })
+    });
+}
+const responseHandler = (success, res) => {
+    console.log("inside responseHandler");
+    const {statusCode, message, results} = success.getJson();
+    console.log()
+    res.status(statusCode).json({
+        status: "success",
+        statusCode,
+        message,
+        results
+    });
 }
 
-/* WORK IN PROGRESS */
-// const responseHandler = (err, res) => {
-//     const { statusCode, message } = err;
-//     console.log(statusCode);
-//     if (statusCode != null) {
-//         console.log("entered into error handler");
-//         res.status(statusCode).json({
-//             status:"error",
-//             statusCode,
-//             message,
-//         });
-//     } else {
-//         console.log("entered this");
-//         console.log((res.locals));
-//         res.status(200).json({
-//             status:"success",
-//             statusCode,
-//             message,
-//             results: res.locals.r
-//         });
-//     }
-// };
-
-
 module.exports = {
-    handler,
-    ErrorHandler,
-    DefaultError
+    responseHandler,
+    errorHandler,
+    ErrorHolder,
+    DefaultError,
+    SuccessHolder
 }

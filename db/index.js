@@ -1,16 +1,20 @@
 const mysql = require('mysql');
+require('dotenv').config();
+const separators = ['\\/+','\\:+','\\@+','\\?+'];
 
-const pool = mysql.createPool({
-    connectionLimit: 10,
-    password: 'b1b6fc44',
-    user:'bdf76656acdd9a',
-    database:'heroku_c93ca8b3152014d',
-    host: 'us-cdbr-iron-east-04.cleardb.net',
+const CLEARDB_DATABASE_ARRAY = process.env.CLEARDB_DATABASE_URL.split(new RegExp(separators.join('|'), 'g'));
+const CLEARDB_DATABASE_JSON = {
+    user: CLEARDB_DATABASE_ARRAY[2],
+    password: CLEARDB_DATABASE_ARRAY[3],
+    host: CLEARDB_DATABASE_ARRAY[4],
+    database: CLEARDB_DATABASE_ARRAY[5],
     port: '3306',
+    connectionLimit: 10,
     multipleStatements: true
-});
+};
+console.log(CLEARDB_DATABASE_JSON);
 
-
+const pool = mysql.createPool(CLEARDB_DATABASE_JSON);
 
 /* QUERYING METHODS */
 let agentInfo = () => {
@@ -159,6 +163,20 @@ let updateAgentDetails = (toBeChangedJson) => {
     })
 }
 
+let changeAvailability = (rainbow_id, availability) => {
+    return new Promise((resolve, reject) => {
+        pool.query(`UPDATE agent SET availability = ${availability} WHERE agent_id = "${rainbow_id}";`,
+                    (err, results) => {
+                        if (err) {
+                            console.log('err');
+                            return reject(err);
+                        }
+                        console.log(results);
+                        return resolve(results);
+                    });
+    })
+}
+
 /* DELETE method */
 let deleteAgent = (rainbow_id) => {
     return new Promise((resolve, reject) => {
@@ -186,5 +204,6 @@ module.exports = {
     addAgent,
     initialiseAgentDetails,
     updateAgentDetails,
-    deleteAgent
+    deleteAgent,
+    changeAvailability
 };
