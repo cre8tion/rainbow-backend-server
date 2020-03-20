@@ -8,6 +8,25 @@ let rainbowSDK = new RainbowSDK(options);
 
 rainbowSDK.start();
 
+rainbowSDK.events.on("rainbow_onready", () => {
+
+  // Get your network's list of contacts
+  let contacts = rainbowSDK.contacts.getAll();
+
+  for(let i = 0; i <contacts.length; i++){
+    if(contacts[i].presence === "online"){
+      console.log(`${contacts[i].id} is available`);
+      db.changeAvailability(contacts[i].id, 1);
+    }
+
+    else if(contacts[i].presence === "offline" || contacts[i].presence === "busy"){
+      console.log(`${contacts[i].id} is not available`);
+      db.changeAvailability(contacts[i].id, 0);
+    }
+  }
+
+});
+
 rainbowSDK.events.on("rainbow_oncontactpresencechanged", (contact) => {
   /*
   CONTACT OBJECT
@@ -48,9 +67,15 @@ rainbowSDK.events.on("rainbow_oncontactpresencechanged", (contact) => {
   }
    */
 
-  // Update contact about its availability
-  // Awaiting for DB function to be created.
+  if(contact.presence === "online"){
+    console.log(`${contact.id} is available`);
+    db.changeAvailability(contact.id, 1);
+  }
 
+  else if(contact.presence === "offline" || contact.presence === "busy"){
+    console.log(`${contact.id} is not available`);
+    db.changeAvailability(contact.id, 0);
+  }
 
 });
 
@@ -74,8 +99,12 @@ router.post('/v1/agent_creation', async function(req, res, next) {
     const {userEmailAccount, userPassword, userFirstName, userLastName} = req.body;
     const { details } = req.body || {};
     let user = await generateAgentAcc(userEmailAccount, userPassword, userFirstName, userLastName);
-    // reformat user object
-    let json = await saveNewAgentToDB(user, details);
+    const personalInfo = {
+      "firstname" : userFirstName,
+      "lastname" : userLastName,
+      "email" : userEmailAccount
+    };
+    let json = await saveNewAgentToDB(user, personalInfo, details);
 
     return res.send(json);
   }catch (e) {
@@ -87,6 +116,45 @@ router.post('/v1/agent_creation', async function(req, res, next) {
   }
 });
 
+router.post('/v1/delete_agent', async function(req, res, next) {
+  try{
+    const { userId } = req.body;
+    let result = await deleteAgentFromRainbow(userId);
+    if(result === true){
+      let json = await deleteAgentFromDB(userId);
+      return res.send(json);
+    }
+    else{
+      return res.status(400).send({
+        "success": false,
+        "message": `Deleting agent from rainbow has resulted in an unexpected error`,
+        "data": {}
+      })
+    }
+  } catch (e) {
+    return res.status(400).send({
+      "success": false,
+      "message": e.message,
+      "data": {}
+    })
+  }
+
+});
+
+
+router.post('/v1/update_agent', async function(req, res, next) {
+  try{
+    let json = await updateAgentFromDB(req.body);
+    return res.send(json);
+  } catch (e){
+    return res.status(400).send({
+      "success": false,
+      "message": e.message,
+      "data": {}
+    });
+  }
+});
+
 
 async function generateGuestAcc(){
   try{
@@ -94,7 +162,6 @@ async function generateGuestAcc(){
     console.log("New anonymous user with Jid: " + guest['jid_im']);
     console.log("Your Account is : " + guest['loginEmail']);
     console.log("Your Password is : " + guest['password']);
-    //console.log(guest);
 
     //rainbowSDK.im.sendMessageToJid("Hi anonymous user with Jid: " + guest['jid_im'], guest['jid_im']);
     //rainbowSDK.im.sendMessageToJid("Your Account is : " + guest['loginEmail'], guest['jid_im']);
@@ -118,13 +185,13 @@ async function generateAgentAcc(userEmailAccount, userPassword, userFirstName, u
 
   } catch (e) {
     console.log(e);
-    throw new Error("Agent Account Creation Failed");
+    throw new Error(e.details);
   }
 }
 
-async function saveNewAgentToDB(user, details){
+async function saveNewAgentToDB(user, personalInfo, details){
   try{
-    await db.addAgent(user.id, user.displayName);
+    await db.addAgent(user.id, personalInfo);
     await db.initialiseAgentDetails(user.id, details);
 
     return {
@@ -134,10 +201,48 @@ async function saveNewAgentToDB(user, details){
     }
   } catch (e) {
     console.log(e);
-    throw new Error("Agent Account Update to DB Failed");
+    throw new Error(e.sqlMessage);
   }
 }
 
+async function deleteAgentFromRainbow(userId){
+  try{
+    await rainbowSDK.admin.deleteUser(userId);
+    return true
+  } catch (e) {
+    console.log(e);
+    throw new Error(e.details);
+  }
+}
+
+async function deleteAgentFromDB(userId){
+  try{
+    await db.deleteAgent(userId);
+
+    return {
+      "success": true,
+      "message": "Agent Account deleted successfully",
+      "data": {}
+    }
+  } catch (e) {
+    console.log(e);
+    throw new Error(e.sqlMessage);
+  }
+}
+
+async function updateAgentFromDB(json){
+  try{
+    await db.updateAgentDetails(json);
+    return {
+      "success": true,
+      "message": "Agent Account updated successfully",
+      "data": {}
+    }
+  } catch (e){
+    console.log(e);
+    throw new Error(e.sqlMessage);
+  }
+}
 
 
 module.exports = router;
