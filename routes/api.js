@@ -14,14 +14,16 @@ rainbowSDK.events.on("rainbow_onready", () => {
   let contacts = rainbowSDK.contacts.getAll();
 
   for(let i = 0; i <contacts.length; i++){
-    if(contacts[i].presence === "online"){
-      console.log(`${contacts[i].id} is available`);
-      db.changeAvailability(contacts[i].id, 1);
-    }
-
-    else if(contacts[i].presence === "offline" || contacts[i].presence === "busy"){
-      console.log(`${contacts[i].id} is not available`);
-      db.changeAvailability(contacts[i].id, 0);
+    try {
+      if (contacts[i].presence === "online") {
+        console.log(`${contacts[i].id} is available`);
+        db.changeAvailability(contacts[i].id, 1);
+      } else if (contacts[i].presence === "offline" || contacts[i].presence === "busy") {
+        console.log(`${contacts[i].id} is not available`);
+        db.changeAvailability(contacts[i].id, 0);
+      }
+    } catch (e){
+      console.log(e);
     }
   }
 
@@ -66,16 +68,20 @@ rainbowSDK.events.on("rainbow_oncontactpresencechanged", (contact) => {
       "status": ''
   }
    */
+  try{
+    if(contact.presence === "online"){
+      console.log(`${contact.id} is available`);
+      db.changeAvailability(contact.id, 1);
+    }
 
-  if(contact.presence === "online"){
-    console.log(`${contact.id} is available`);
-    db.changeAvailability(contact.id, 1);
+    else if(contact.presence === "offline" || contact.presence === "busy"){
+      console.log(`${contact.id} is not available`);
+      db.changeAvailability(contact.id, 0);
+    }
+  } catch (e) {
+    console.log(e);
   }
 
-  else if(contact.presence === "offline" || contact.presence === "busy"){
-    console.log(`${contact.id} is not available`);
-    db.changeAvailability(contact.id, 0);
-  }
 
 });
 
