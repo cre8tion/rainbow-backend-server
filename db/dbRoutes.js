@@ -104,7 +104,11 @@ router.get('/agent/:rainbow_id', async (req, res, next) => {
  * Request body JSON example
     {
         "rainbow_id": "fake_rainbow_id4",
-        "name": "Jacob Wijaya",
+        "personalInfo": {
+    	"firstname": "Le",
+    	"lastname": "Xuan",
+    	"email": "lexuan@gmail.com"
+        },
         "details": {
             "languages": {
                 "english": 1,
@@ -145,7 +149,11 @@ router.post('/add', async (req, res, next) => {
  * Request Body JSON example (All except rainbow_id are optional)
     {
     "rainbow_id": "fake_rainbow_id4",
-    "name": "Jacob Wijaya",
+    "personalInfo": {
+    	"firstname": "Le",
+    	"lastname": "Xuan",
+    	"email": "lexuan@gmail.com"
+    },
     "details": {
     	"languages": {
     		"english": 1,
