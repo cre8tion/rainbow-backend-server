@@ -74,6 +74,7 @@ router.post('/v1/agent_creation', async function(req, res, next) {
     const {userEmailAccount, userPassword, userFirstName, userLastName} = req.body;
     const { details } = req.body || {};
     let user = await generateAgentAcc(userEmailAccount, userPassword, userFirstName, userLastName);
+    // reformat user object
     let json = await saveNewAgentToDB(user, details);
 
     return res.send(json);
