@@ -24,15 +24,15 @@ try{
 var checkChangesToDb = (response, resolve, reject) => {
     if (response instanceof Array) {
         if (response[0].affectedRows == 0) {
-            reject("rainbow_id does not exist.");
+            return reject("rainbow_id does not exist.");
         } else {
-            resolve(response);
+            return resolve(response);
         }
     } else {
         if (response.affectedRows == 0) {
-            reject("rainbow_id does not exist.");
+            return reject("rainbow_id does not exist.");
         } else {
-            resolve(response);
+            return resolve(response);
         }
     }
 }

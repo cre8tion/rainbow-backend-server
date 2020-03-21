@@ -190,7 +190,7 @@ async function generateAgentAcc(userEmailAccount, userPassword, userFirstName, u
 
   } catch (e) {
     console.log(e);
-    throw new Error(e.details);
+    throw new Error(e.error.errorDetails);
   }
 }
 
@@ -216,7 +216,7 @@ async function deleteAgentFromRainbow(userId){
     return true
   } catch (e) {
     console.log(e);
-    throw new Error(e.details);
+    throw new Error(e.error.errorDetails);
   }
 }
 
@@ -230,7 +230,6 @@ async function deleteAgentFromDB(userId){
       "data": {}
     }
   } catch (e) {
-    console.log(e);
     throw new Error(e.sqlMessage);
   }
 }
@@ -245,7 +244,7 @@ async function updateAgentFromDB(json){
     }
   } catch (e){
     console.log(e);
-    throw new Error(e.sqlMessage);
+    throw new Error(e);
   }
 }
 
