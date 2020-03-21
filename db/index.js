@@ -15,7 +15,7 @@ try{
   };
   console.log(CLEARDB_DATABASE_JSON);
 
-  const pool = mysql.createPool(CLEARDB_DATABASE_JSON);
+  var pool = mysql.createPool(CLEARDB_DATABASE_JSON);
 } catch (e) {
   console.log(e);
 }
@@ -137,9 +137,9 @@ let updateAgentDetails = (toBeChangedJson) => {
         if (toBeChangedJson.hasOwnProperty("personalInfo")) {
             var currentUpdateArray = [];
             for (var key in toBeChangedJson.personalInfo) {
-                currentUpdateArray.push(`${innerKey} = ${rootDir[key][innerKey]}`);
+                currentUpdateArray.push(`${key} = '${toBeChangedJson.personalInfo[key]}'`);
             }
-            let currentUpdate = `UPDATE agent SET ` + currentUpdateArray.join(', ') +` WHERE (agent_id = '${toBeChangedJson.rainbow_id}');`;
+            let currentUpdate = `UPDATE agent SET ${currentUpdateArray.join(', ')} WHERE (agent_id = '${toBeChangedJson.rainbow_id}');`;
             overallArray.push(currentUpdate);
         }
 
@@ -149,12 +149,13 @@ let updateAgentDetails = (toBeChangedJson) => {
                 var currentUpdateArray = [];
                 console.log(rootDir[key]);
                 for (var innerKey in rootDir[key]) {
-                    currentUpdateArray.push(`${innerKey} = ${rootDir[key][innerKey]}`);
+                    currentUpdateArray.push(`${innerKey} = '${rootDir[key][innerKey]}'`);
                 }
                 let currentUpdate = `UPDATE ${key} SET ` + currentUpdateArray.join(', ') +` WHERE (agent_id = '${toBeChangedJson.rainbow_id}');`;
                 overallArray.push(currentUpdate);
             }
         }
+        console.log(overallArray.join('\n'));
 
         pool.query(`${overallArray.join('\n')}`,
                     (err, results) => {

@@ -1,7 +1,6 @@
 const express = require('express');
-// const {agentInfo, joinAllTables, queryLanguage, querySkills,} = require('../db');
 import db from '../db';
-const {responseHandler, errorHandler, DefaultError, SuccessHolder} = require('./errorHandle');
+const {successHandler, errorHandler, DefaultError} = require('./errorHandle');
 
 const router = express.Router();
 
@@ -31,22 +30,17 @@ router.get('/all/:keyTerm', async (req, res, next) => {
 
     try{
         let results = await db.query(req.params.keyTerm);
-        res.locals.results = new SuccessHolder(results);
-        next();
-        // res.json(results);
+        successHandler(res, results, "success");
     } catch(e) {
         console.log(e);
-        res.sendStatus(500);
+        next(new DefaultError(e.sqlMessage));
     }
 });
 
 router.get('/all', async (req, res, next) => {
     try {
         let results = await db.joinAllTables();
-        res.locals.results = new SuccessHolder(results);
-        next();
-        
-        // res.json(results);
+        successHandler(res, results, "success");
     } catch(e) {
         console.log(e);
         next(new DefaultError(e.sqlMessage));
@@ -56,15 +50,11 @@ router.get('/all', async (req, res, next) => {
 /* AVAILABILITY METHODS */
 router.put('/agent/:rainbow_id/availability/:availability', async(req, res, next) => {
     try {
-        console.log("entered here");
-        let results = await db.changeAvailability(req.params.rainbow_id, req.params.availability);
-        console.log(results);
-        res.locals.results = new SuccessHolder();
-        next();
+        await db.changeAvailability(req.params.rainbow_id, req.params.availability);
+        successHandler(res);
     } catch(e) {
         console.log(e);
-        let error = new DefaultError(e.sqlMessage);
-        next(error);
+        next(new DefaultError(e.sqlMessage));
     }
 });
 
@@ -80,7 +70,7 @@ router.put('/agent/:rainbow_id/availability/:availability', async(req, res, next
 router.get('/agent/:rainbow_id', async (req, res, next) => {
     try {
         let results = await db.joinAllTables();
-        let jsonToSend;
+        var jsonToSend;
         for(var i = 0; i < results.length; i++) {
             if (req.params.rainbow_id === results[i].agent_id) {
                 jsonToSend = results[i]
@@ -88,9 +78,7 @@ router.get('/agent/:rainbow_id', async (req, res, next) => {
             }
         }
         if (jsonToSend != null) {
-            res.locals.results = new SuccessHolder(results);
-            next();
-            // res.json(jsonToSend);
+            successHandler(res, jsonToSend, "success");
         }
         else next(new DefaultError("rainbow_id " + req.params.rainbow_id + " does not exits."));
     } catch(e) {
@@ -133,10 +121,8 @@ router.post('/add', async (req, res, next) => {
         await db.addAgent(rainbow_id, personalInfo);
         // To initialise the Agent's languages and skills to be 0 if not specified in details JSON
         await db.initialiseAgentDetails(rainbow_id, details);
-        res.locals.results = new SuccessHolder();
-        next();
+        successHandler(res);
 
-        // res.json(results);      // TODO: We should be returning something else
     } catch(e) {
         console.log(e);
         let error = new DefaultError(e.sqlMessage);
@@ -173,8 +159,7 @@ router.put('/update', async (req, res, next) => {
         let toBeChangedJson = req.body;
 
         await db.updateAgentDetails(toBeChangedJson);
-        res.locals.results = new SuccessHolder();
-        next();
+        successHandler(res);
 
     } catch(e) {
         console.log(e);
@@ -186,11 +171,9 @@ router.put('/update', async (req, res, next) => {
 router.delete('/delete/agent/:rainbow_id', async (req, res, next) => {
     try {
         let rainbow_id = req.params.rainbow_id;
-        let results = await db.deleteAgent(rainbow_id);
-        res.locals.results = new SuccessHolder();
-        next();
+        await db.deleteAgent(rainbow_id);
+        successHandler(res);
 
-        // res.json(results);      // TODO: We should be returning something else
     } catch(e) {
         console.log(e);
         let error = new DefaultError(e.sqlMessage);
@@ -198,12 +181,7 @@ router.delete('/delete/agent/:rainbow_id', async (req, res, next) => {
     }
 });
 
-/* SUCCESS RESPONSE HANDLING */
-router.use((req, res, next) => {
-    responseHandler(res.locals.results, res);
-});
-
-/* ERROR HANDLING */
+/* ERROR HANDLING MIDDLEWARE */
 router.use((err, req, res, next) => {
     errorHandler(err,res);
 });

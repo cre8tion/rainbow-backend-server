@@ -1,22 +1,3 @@
-class SuccessHolder {
-    constructor(data, message) {
-        if (message != null) {
-            this.message = message;
-            this.data = data;
-        } else {
-            this.message = "success";
-            this.data = data;
-        }
-    }
-    getJson() {
-        const dir = {
-            success: true,
-            message: this.message,
-            data: this.data
-        }
-        return dir;
-    }
-}
 class DefaultError extends Error {
     constructor(message) {
         super();
@@ -32,20 +13,17 @@ const errorHandler = (err, res) => {
         data: {}
     });
 }
-const responseHandler = (success, res) => {
-    // console.log("inside responseHandler");
-    const {message, data} = success.getJson();
-    console.log()
+const successHandler = (res, data, message) => {
+    
     res.status(200).json({
         success: true,
-        message,
-        data
+        message: message || "success",
+        data: data || {}
     });
 }
 
 module.exports = {
-    responseHandler,
+    successHandler,
     errorHandler,
-    DefaultError,
-    SuccessHolder
+    DefaultError
 }
