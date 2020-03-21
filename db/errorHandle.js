@@ -1,7 +1,13 @@
 class DefaultError extends Error {
     constructor(message) {
         super();
-        this.message = message;
+        if (!message) {
+            this.message = "internal error";
+        } else if (message.hasOwnProperty('sqlMessage')){
+            this.message = message.sqlMessage;
+        } else {
+            this.message = message;
+        }
     }
 }
 

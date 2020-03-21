@@ -33,7 +33,7 @@ router.get('/all/:keyTerm', async (req, res, next) => {
         successHandler(res, results, "success");
     } catch(e) {
         console.log(e);
-        next(new DefaultError(e.sqlMessage));
+        next(new DefaultError(e));
     }
 });
 
@@ -43,7 +43,7 @@ router.get('/all', async (req, res, next) => {
         successHandler(res, results, "success");
     } catch(e) {
         console.log(e);
-        next(new DefaultError(e.sqlMessage));
+        next(new DefaultError(e));
     }
 })
 
@@ -54,7 +54,7 @@ router.put('/agent/:rainbow_id/availability/:availability', async(req, res, next
         successHandler(res);
     } catch(e) {
         console.log(e);
-        next(new DefaultError(e.sqlMessage));
+        next(new DefaultError(e));
     }
 });
 
@@ -79,7 +79,7 @@ router.get('/route', async(req, res, next) => {
         } 
     } catch(e) {
         console.log(e);
-        next(new DefaultError(e.sqlMessage));
+        next(new DefaultError(e));
     }
 })
 
@@ -108,7 +108,7 @@ router.get('/agent/:rainbow_id', async (req, res, next) => {
         else next(new DefaultError("rainbow_id " + req.params.rainbow_id + " does not exits."));
     } catch(e) {
         console.log(e);
-        let error = new DefaultError(e.sqlMessage);
+        let error = new DefaultError(e);
         next(error);
     }
 });
@@ -150,7 +150,7 @@ router.post('/add', async (req, res, next) => {
 
     } catch(e) {
         console.log(e);
-        let error = new DefaultError(e.sqlMessage);
+        let error = new DefaultError(e);
         next(error);
     }
 })
@@ -182,27 +182,24 @@ router.post('/add', async (req, res, next) => {
 router.put('/update', async (req, res, next) => {
     try {
         let toBeChangedJson = req.body;
-
         await db.updateAgentDetails(toBeChangedJson);
         successHandler(res);
 
     } catch(e) {
         console.log(e);
-        let error = new DefaultError(e.sqlMessage);
-        next(error);
+        next(new DefaultError(e));
     }
 });
 
 router.delete('/delete/agent/:rainbow_id', async (req, res, next) => {
     try {
         let rainbow_id = req.params.rainbow_id;
-        await db.deleteAgent(rainbow_id);
+        let response = await db.deleteAgent(rainbow_id);
         successHandler(res);
 
     } catch(e) {
         console.log(e);
-        let error = new DefaultError(e.sqlMessage);
-        next(error);
+        next(new DefaultError(e));
     }
 });
 

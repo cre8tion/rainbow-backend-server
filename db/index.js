@@ -20,6 +20,23 @@ try{
   console.log(e);
 }
 
+/* Helper function: check if any data has been affected */
+var checkChangesToDb = (response, resolve, reject) => {
+    if (response instanceof Array) {
+        if (response[0].affectedRows == 0) {
+            reject("rainbow_id does not exist.");
+        } else {
+            resolve(response);
+        }
+    } else {
+        if (response.affectedRows == 0) {
+            reject("rainbow_id does not exist.");
+        } else {
+            resolve(response);
+        }
+    }
+}
+
 
 /* QUERYING METHODS */
 let agentInfo = () => {
@@ -162,7 +179,7 @@ let initialiseAgentDetails = (rainbow_id, details) => {
                             return reject(err);
                         }
                         console.log(results);
-                        return resolve(results);
+                        checkChangesToDb(results, resolve, reject);
                     });
     })
 };
@@ -204,7 +221,7 @@ let updateAgentDetails = (toBeChangedJson) => {
                             return reject(err);
                         }
                         console.log(results);
-                        return resolve(results);
+                        checkChangesToDb(results, resolve, reject);
                     });
     })
 };
@@ -218,7 +235,7 @@ let changeAvailability = (rainbow_id, availability) => {
                             return reject(err);
                         }
                         console.log(results);
-                        return resolve(results);
+                        checkChangesToDb(results, resolve, reject);
                     });
     })
 };
@@ -235,7 +252,7 @@ let deleteAgent = (rainbow_id) => {
                             return reject(err);
                         }
                         console.log(results);
-                        return resolve(results);
+                        checkChangesToDb(results, resolve, reject);
                     });
     })
 };
