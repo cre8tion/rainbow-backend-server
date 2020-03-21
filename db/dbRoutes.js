@@ -58,6 +58,31 @@ router.put('/agent/:rainbow_id/availability/:availability', async(req, res, next
     }
 });
 
+/* ROUTING ENGINE 
+{
+	"filters": [
+		"english",
+		"insurance"
+	]
+}
+*/
+
+router.get('/route', async(req, res, next) => {
+    try {
+        console.log(req.body.filters);
+        let results = await db.routeForAgent(req.body.filters);
+        if (results != null) {
+            await db.changeAvailability(results,0);
+            successHandler(res, results, "success");
+        } else {
+            successHandler(res, [], "There are no suitable agents currently.");
+        } 
+    } catch(e) {
+        console.log(e);
+        next(new DefaultError(e.sqlMessage));
+    }
+})
+
 
 /* ADMINISTRATIVE FUNCTIONS:
 * VIEW AGENT

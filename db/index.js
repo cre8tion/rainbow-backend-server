@@ -68,6 +68,45 @@ let query = (keyTerm) => {
 }
 
 
+let filterAgents = (filters) => {
+    return new Promise((resolve, reject) => {
+
+        var filterArray = [];
+        for (var i in filters) {
+            console.log(filters[i]);
+            filterArray.push(`${filters[i]} = 1`);
+        }
+
+        let toBeQueried = `SELECT * FROM (
+                                SELECT * FROM agent
+                                LEFT JOIN languages USING(agent_id)
+                                LEFT JOIN skills USING(agent_id)) A
+                            WHERE availability = 1 AND ${filterArray.join(' AND ')};`;
+        pool.query(toBeQueried, (err, results) => {
+                    if (err) {
+                        console.log('err');
+                        return reject(err);
+                    }
+                    
+                    return resolve(results);
+        });
+    })
+}
+
+let routeForAgent = async (filters) => {
+    let suitableAgents = await filterAgents(filters);
+    console.log(suitableAgents);
+    if (suitableAgents.length == 0) return null;
+
+    return suitableAgents[0].agent_id;
+
+    // var resultsArray = [];
+    // for (var i in results) {
+    //     resultsArray.push(results[i].agent_id);
+    // }
+}
+
+
 /* Create Methods */
 
 let addAgent = (rainbow_id, personalInfo) => {
@@ -211,5 +250,6 @@ module.exports = {
     initialiseAgentDetails,
     updateAgentDetails,
     deleteAgent,
-    changeAvailability
+    changeAvailability,
+    routeForAgent
 };
