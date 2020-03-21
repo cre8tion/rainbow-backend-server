@@ -103,7 +103,7 @@ router.get('/v1/guest_creation', async function(req, res, next) {
 router.post('/v1/agent_creation', async function(req, res, next) {
   try{
     const {userEmailAccount, userPassword, userFirstName, userLastName} = req.body;
-    const { details } = req.body || {};
+    const { details={} } = req.body || {};
     let user = await generateAgentAcc(userEmailAccount, userPassword, userFirstName, userLastName);
     const personalInfo = {
       "firstname" : userFirstName,
@@ -144,7 +144,6 @@ router.post('/v1/delete_agent', async function(req, res, next) {
       "data": {}
     })
   }
-
 });
 
 

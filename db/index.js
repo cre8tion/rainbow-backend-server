@@ -65,7 +65,7 @@ let query = (keyTerm) => {
            return resolve(results);
        });
    });
-}
+};
 
 
 let filterAgents = (filters) => {
@@ -87,11 +87,11 @@ let filterAgents = (filters) => {
                         console.log('err');
                         return reject(err);
                     }
-                    
+
                     return resolve(results);
         });
     })
-}
+};
 
 let routeForAgent = async (filters) => {
     let suitableAgents = await filterAgents(filters);
@@ -104,7 +104,7 @@ let routeForAgent = async (filters) => {
     // for (var i in results) {
     //     resultsArray.push(results[i].agent_id);
     // }
-}
+};
 
 
 /* Create Methods */
@@ -123,7 +123,8 @@ let addAgent = (rainbow_id, personalInfo) => {
                         return resolve(results);
                     });
     })
-}
+};
+
 let initialiseAgentDetails = (rainbow_id, details) => {
     return new Promise((resolve, reject) => {
         let dir = {
@@ -137,7 +138,7 @@ let initialiseAgentDetails = (rainbow_id, details) => {
                 bank_statement: 0,
                 fraud: 0
             }
-        }
+        };
 
         for (var key in dir) {
             if (details.hasOwnProperty(key)) {
@@ -153,8 +154,8 @@ let initialiseAgentDetails = (rainbow_id, details) => {
                     VALUES ("${rainbow_id}", "${dir.languages.english}",
                     "${dir.languages.chinese}", "${dir.languages.malay}");
                     INSERT INTO skills(agent_id, insurance, bank_statement, fraud)
-                    VALUES ("${rainbow_id}", "${dir.skills.insurance}", 
-                    "${dir.skills.bank_statement}", "${dir.skills.fraud}");`, 
+                    VALUES ("${rainbow_id}", "${dir.skills.insurance}",
+                    "${dir.skills.bank_statement}", "${dir.skills.fraud}");`,
                     (err, results) => {
                         if(err) {
                             console.log('err');
@@ -164,7 +165,7 @@ let initialiseAgentDetails = (rainbow_id, details) => {
                         return resolve(results);
                     });
     })
-}
+};
 
 /* UPDATE METHODS */
 
@@ -206,7 +207,7 @@ let updateAgentDetails = (toBeChangedJson) => {
                         return resolve(results);
                     });
     })
-}
+};
 
 let changeAvailability = (rainbow_id, availability) => {
     return new Promise((resolve, reject) => {
@@ -220,7 +221,7 @@ let changeAvailability = (rainbow_id, availability) => {
                         return resolve(results);
                     });
     })
-}
+};
 
 /* DELETE method */
 let deleteAgent = (rainbow_id) => {
@@ -237,7 +238,7 @@ let deleteAgent = (rainbow_id) => {
                         return resolve(results);
                     });
     })
-}
+};
 
 
 

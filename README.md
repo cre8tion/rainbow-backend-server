@@ -9,10 +9,5 @@
 
 
 
-## Legacy Template README
-- Make sure you have node env setup on your local machine
-- As per the instruction you have to implement a post endpoint `/square`
-- Go to `app.js` in this template and you will find `/square` endpoint refers to implementation in `./routes/square` file
-- Go to `square.js` in routes folder
-- in this file a default post method in implemented (denoted by `/`).
-- write your implementation in this method. This method will be the entry point when you submit your solution for evaluation
+## Details
+- Backend Server using Express, Rainbow Node SDK and MySQL server to serve as an routing engine.
