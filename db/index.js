@@ -90,7 +90,7 @@ let initialiseAgentDetails = (rainbow_id, details) => {
             },
             skills: {
                 insurance: 0,
-                'bank statement': 0,
+                bank_statement: 0,
                 fraud: 0
             }
         }
@@ -108,9 +108,9 @@ let initialiseAgentDetails = (rainbow_id, details) => {
         pool.query(`INSERT INTO languages(agent_id, english, chinese, malay)
                     VALUES ("${rainbow_id}", "${dir.languages.english}", 
                     "${dir.languages.chinese}", "${dir.languages.malay}");
-                    INSERT INTO skills(agent_id, insurance, \`bank statement\`, fraud)
+                    INSERT INTO skills(agent_id, insurance, bank_statement, fraud)
                     VALUES ("${rainbow_id}", "${dir.skills.insurance}", 
-                    "${dir.skills["bank statement"]}", "${dir.skills.fraud}");`, 
+                    "${dir.skills.bank_statement}", "${dir.skills.fraud}");`, 
                     (err, results) => {
                         if(err) {
                             console.log('err');
