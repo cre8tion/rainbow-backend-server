@@ -127,6 +127,7 @@ router.post('/v1/delete_agent', async function(req, res, next) {
     const { userId } = req.body;
     let result = await deleteAgentFromRainbow(userId);
     if(result === true){
+      console.log("Deleted Agent from rainbow");
       let json = await deleteAgentFromDB(userId);
       return res.send(json);
     }

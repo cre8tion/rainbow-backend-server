@@ -1,8 +1,10 @@
 const request = require('supertest');
 
-// Start Server before running any tests
+/*
+ Start Server before running ANY tests
+ */
 
-describe("API Endpoints", () => {
+describe('Guest Account Creation API', () => {
   let server;
   beforeAll( async () => {
     server = request('http://localhost:8080');
@@ -17,15 +19,58 @@ describe("API Endpoints", () => {
 
     expect(res.body.success).toBe(true)
   });
+});
 
-  it('should create a agent account', async() => {
+describe('Agent Account Creation API', () => {
+  let server;
+  beforeAll( async () => {
+    server = request('http://localhost:8080');
+  });
+
+  it('should create an agent account without details', async() => {
     //TODO
-    const res = await server.get('/api/v1/guest_creation')
+    const res = await server.post('/api/v1/agent_creation')
       .set('Accept', 'application/json')
+      .send({
+        "userEmailAccount":"a2p2a344@gmail.com",
+        "userPassword": "ASd23ads!",
+        "userFirstName": "Tom",
+        "userLastName": "Hanks"
+      })
       .expect('Content-Type', /json/)
       .expect(200);
 
-    expect(res.body.success).toBe(true)
+    expect(res.body.success).toBe(true);
+    expect(res.body.message).toBe("Agent Account generated successfully");
+  });
+
+  it('should create an agent account with details', async() => {
+    //TODO
+    const res = await server.post('/api/v1/agent_creation')
+      .set('Accept', 'application/json')
+      .send({
+        "userEmailAccount":"a2p2dga344@gmail.com",
+        "userPassword": "ASd23ads!",
+        "userFirstName": "Tom",
+        "userLastName": "Hanks",
+        "details": {
+          "languages": {
+            "english": 1,
+            "chinese": 0,
+            "malay": 1
+          },
+          "skills": {
+            "insurance": 1,
+            "bank statement": 1,
+            "fraud": 0
+          }
+        }
+      })
+      .expect('Content-Type', /json/)
+      .expect(200);
+
+    expect(res.body.success).toBe(true);
+    expect(res.body.message).toBe("Agent Account generated successfully");
   });
 
   it('should throw agent account created error', async() => {
@@ -79,8 +124,16 @@ describe("API Endpoints", () => {
       "length must be between 8 and 64 characters, " +
       "and contain at least 1 lowercase, 1 uppercase, 1 number and 1 special character")
   });
+});
 
-  it('should update a agent account', async() => {
+
+describe("Agent Account Update API", () => {
+  let server;
+  beforeAll( async () => {
+    server = request('http://localhost:8080');
+  });
+
+  it('should update an agent account', async() => {
     const res = await server.post('/api/v1/update_agent')
       .set('Accept', 'application/json')
       .send({
@@ -128,6 +181,27 @@ describe("API Endpoints", () => {
     expect(res.body.success).toBe(false);
     expect(res.body.message).toBe("rainbow_id does not exist.")
   });
+});
+
+describe('Agent Account Delete API', () => {
+  let server;
+  beforeAll( async () => {
+    server = request('http://localhost:8080');
+  });
+
+  it('should delete an agent account', async() => {
+    // AgentId must be already present in DB
+    const res = await server.post('/api/v1/delete_agent')
+      .set('Accept', 'application/json')
+      .send({
+        "userId": "5e78410aae2042244e431584"
+      })
+      .expect('Content-Type', /json/)
+      .expect(200);
+
+    expect(res.body.success).toBe(true);
+    expect(res.body.message).toBe("Agent Account deleted successfully");
+  });
 
   it('should throw delete agent error v1', async() => {
     const res = await server.post('/api/v1/delete_agent')
@@ -155,6 +229,6 @@ describe("API Endpoints", () => {
     expect(res.body.success).toBe(false);
     expect(res.body.message).toBe("User with id 5e760445f43fc36ab0f4bcce does not exist, " +
       "not able to delete it.")
-  })
+  });
 });
 

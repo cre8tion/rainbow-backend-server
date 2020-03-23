@@ -11,3 +11,7 @@
 
 ## Details
 - Backend Server using Express, Rainbow Node SDK and MySQL server to serve as an routing engine.
+
+
+## Testing
+- ***Start the server before running any tests***
