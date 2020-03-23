@@ -190,7 +190,17 @@ async function generateAgentAcc(userEmailAccount, userPassword, userFirstName, u
 
   } catch (e) {
     console.log(e);
-    throw new Error(e.error.errorDetails);
+    if(Array.isArray(e.error.errorDetails) && e.error.errorDetails.length > 1){
+      const reducer = (accumulator, currentValue) => accumulator + currentValue.msg;
+      const result = e.error.errorDetails.reduce(reducer,"");
+      throw new Error(result);
+    }
+    else if(Array.isArray(e.error.errorDetails)){
+      throw new Error(e.error.errorDetails[0].msg);
+    }
+    else{
+      throw new Error(e.error.errorDetails);
+    }
   }
 }
 
@@ -216,7 +226,12 @@ async function deleteAgentFromRainbow(userId){
     return true
   } catch (e) {
     console.log(e);
-    throw new Error(e.error.errorDetails);
+    if(Array.isArray(e.error.errorDetails)){
+      throw new Error(e.error.errorDetails[0].msg);
+    }
+    else{
+      throw new Error(e.error.errorDetails);
+    }
   }
 }
 

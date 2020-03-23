@@ -35,7 +35,7 @@ var checkChangesToDb = (response, resolve, reject) => {
             return resolve(response);
         }
     }
-}
+};
 
 
 /* QUERYING METHODS */

@@ -9,7 +9,7 @@
   "scripts": {
     "start": "node ./bin/www",
     "devdb": "npx nodemon ./app.js -w db -w app.js",
-    "test": "jest"
+    "test": "jest --watch"
   },
   "dependencies": {
     "axios": "^0.18.1",
@@ -24,12 +24,26 @@
     "jade": "~1.11.0",
     "morgan": "^1.9.1",
     "mysql": "^2.18.1",
-    "rainbow-node-sdk": "^1.67.1",
+    "rainbow-node-sdk": "^1.68.0",
     "serve-favicon": "~2.4.2"
   },
   "devDependencies": {
     "babel-register": "^6.26.0",
     "jest": "^25.1.0",
-    "nodemon": "^2.0.2"
+    "nodemon": "^2.0.2",
+    "supertest": "^4.0.2"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "verbose": true,
+    "moduleFileExtensions": [
+      "js",
+      "json",
+      "jsx",
+      "ts",
+      "tsx",
+      "node"
+    ],
+    "testTimeout": 10000
   }
 }

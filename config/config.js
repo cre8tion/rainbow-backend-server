@@ -2,7 +2,12 @@ require('dotenv').config();
 
 let rainbowSDK_options = {
   rainbow: {
-    host: "sandbox" // Using Sandbox Testing
+    host: "sandbox", // Using Sandbox Testing
+    mode: "xmpp"
+  },
+  s2s: {
+    "hostCallback": "localhost", // S2S Callback URL used to receive events on internet
+    "locallistenningport": "4000" // Local port where the events must be forwarded from S2S Callback Web server.
   },
   credentials: {
     login: process.env.DEV_LOGIN,
