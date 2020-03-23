@@ -58,21 +58,17 @@ router.put('/agent/:rainbow_id/availability/:availability', async(req, res, next
     }
 });
 
-/* ROUTING ENGINE 
-{
-	"filters": [
-		"english",
-		"insurance"
-	]
-}
-*/
+/* ROUTING ENGINE */
 
-router.get('/route', async(req, res, next) => {
+router.get('/route/:filters', async(req, res, next) => {
     try {
-        console.log(req.body.filters);
-        let results = await db.routeForAgent(req.body.filters);
+        let filters = req.params.filters;
+        let filterArray = filters.split('+');
+        console.log(filterArray);
+        
+        let results = await db.routeForAgent(filterArray);
         if (results != null) {
-            await db.changeAvailability(results,0);
+            db.changeAvailability(results,0);
             successHandler(res, results, "success");
         } else {
             successHandler(res, [], "There are no suitable agents currently.");

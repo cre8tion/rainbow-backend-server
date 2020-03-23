@@ -116,11 +116,6 @@ let routeForAgent = async (filters) => {
     if (suitableAgents.length == 0) return null;
 
     return suitableAgents[0].agent_id;
-
-    // var resultsArray = [];
-    // for (var i in results) {
-    //     resultsArray.push(results[i].agent_id);
-    // }
 };
 
 
