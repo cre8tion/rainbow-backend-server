@@ -7,14 +7,16 @@
     },
     "details": {
     	"languages": {
-    		"english": 1,
-    		"chinese": 1,
-    		"malay": 1
+    		"english": 0,
+    		"chinese": 0,
+    		"malay": 0
     	},
     	"skills": {
-    		"insurance": 1,
-    		"bank_statement": 1,
-    		"fraud": 1
+    		"insurance": 0,
+    		"bank_statement": 0,
+    		"fraud": 0
     	}
-    }
+    },
+    "availability": 1,
+
 }]

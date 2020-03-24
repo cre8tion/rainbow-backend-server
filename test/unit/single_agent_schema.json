@@ -1,0 +1,19 @@
+{
+    "type": "object",
+    "additionalProperties": false,
+    "required": ["agent_id", "firstname", "lastname", "email", "availability", 
+                 "english", "chinese", "malay", "insurance", "bank_statement", "fraud"],
+    "properties": {
+        "agent_id": "string",
+        "firstname": ["string", "null"],
+        "lastname": ["string", "null"],
+        "email": ["string", "null"],
+        "availability": "integer",
+        "english": "integer",
+        "chinese": "integer",
+        "malay": "integer",
+        "insurance": "integer",
+        "bank_statement": "integer",
+        "fraud": "integer"
+    }
+}
