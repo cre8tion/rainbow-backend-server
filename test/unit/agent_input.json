@@ -1,0 +1,20 @@
+[{
+    "rainbow_id": "fake_rainbow_id11",
+    "personalInfo": {
+    	"firstname": "agent",
+    	"lastname": "eleven",
+    	"email": "fake11@fake.com"
+    },
+    "details": {
+    	"languages": {
+    		"english": 1,
+    		"chinese": 1,
+    		"malay": 1
+    	},
+    	"skills": {
+    		"insurance": 1,
+    		"bank_statement": 1,
+    		"fraud": 1
+    	}
+    }
+}]

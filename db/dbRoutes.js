@@ -71,7 +71,7 @@ router.get('/route/:filters', async(req, res, next) => {
             db.changeAvailability(results,0);
             successHandler(res, results, "success");
         } else {
-            successHandler(res, [], "There are no suitable agents currently.");
+            successHandler(res, {}, "There are no suitable agents currently.");
         } 
     } catch(e) {
         console.log(e);

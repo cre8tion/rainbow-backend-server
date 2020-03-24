@@ -1,0 +1,42 @@
+{
+    "type": "object",
+    "description": "The root schema comprises the entire JSON document.",
+    "additionalProperties": false,
+    "required": [
+        "success",
+        "message",
+        "data"
+    ],
+    "properties": {
+        "success": {
+            "type": "boolean",
+            "examples": [
+                true, false
+            ]
+        },
+        "message": {
+            "type": ["string", "null"],
+            "examples": [
+                "successs", null
+            ]
+        },
+        "data": {
+            "type": ["object", "array"],
+            "examples": [
+                {}, [{
+                    "rainbow_id": "fake_rainbow_id11",
+                    "firstname": "agent",
+                    "lastname": "eleven",
+                    "email": "fake11@fake.com",
+                    "english": 1,
+                    "chinese": 1,
+                    "malay": 1,
+                    "insurance": 1,
+                    "bank_statement": 1,
+                    "fraud": 1
+                    }
+                ]],
+            "additionalProperties": true
+        }
+    }
+}

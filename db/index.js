@@ -115,7 +115,7 @@ let routeForAgent = async (filters) => {
     console.log(suitableAgents);
     if (suitableAgents.length == 0) return null;
 
-    return suitableAgents[0].agent_id;
+    return {selectedAgent: suitableAgents[0].agent_id};
 };
 
 
