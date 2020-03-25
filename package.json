@@ -9,7 +9,10 @@
   "scripts": {
     "start": "node ./bin/www",
     "devdb": "npx nodemon ./app.js -w db -w app.js",
-    "test": "jest --watch"
+    "start-server": "npm start",
+    "ci": "start-server-and-test start-server 8080 test-it",
+    "test-it": "jest test/integration/api.test.js",
+    "test": "jest test/unit/*"
   },
   "dependencies": {
     "axios": "^0.18.1",
@@ -31,6 +34,7 @@
     "babel-register": "^6.26.0",
     "jest": "^25.1.0",
     "nodemon": "^2.0.2",
+    "start-server-and-test": "^1.10.11",
     "supertest": "^4.0.2"
   },
   "jest": {

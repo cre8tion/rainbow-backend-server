@@ -1,12 +1,10 @@
 require('babel-register');
 var express = require('express');
 var path = require('path');
-var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
-var square = require('./routes/square').default;
 var api = require('./routes/api');
 var index = require('./routes/index');
 
@@ -15,10 +13,6 @@ var app = express();
 /* db router */
 const dbRouter = require('./db/dbRoutes.js');
 app.use('/db', dbRouter);
-
-app.use('/db/test', (req,res,next) => {
-  res.send("helloworld");
-});
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));

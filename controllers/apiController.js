@@ -1,6 +1,6 @@
 import db from "../db";
 
-export async function updateAgentFromDB(json){
+async function updateAgentFromDB(json){
   try{
     await db.updateAgentDetails(json);
     return {
@@ -14,7 +14,7 @@ export async function updateAgentFromDB(json){
   }
 }
 
-export async function deleteAgentFromDB(userId){
+async function deleteAgentFromDB(userId){
   try{
     await db.deleteAgent(userId);
 
@@ -28,7 +28,7 @@ export async function deleteAgentFromDB(userId){
   }
 }
 
-export async function generateGuestAcc(rainbowSDK){
+async function generateGuestAcc(rainbowSDK){
   try{
     let guest = await rainbowSDK.admin.createAnonymousGuestUser(86400);
     console.log("New anonymous user with Jid: " + guest['jid_im']);
@@ -46,7 +46,7 @@ export async function generateGuestAcc(rainbowSDK){
   }
 }
 
-export async function deleteAgentFromRainbow(rainbowSDK, userId){
+async function deleteAgentFromRainbow(rainbowSDK, userId){
   try{
     await rainbowSDK.admin.deleteUser(userId);
     return true
@@ -61,7 +61,7 @@ export async function deleteAgentFromRainbow(rainbowSDK, userId){
   }
 }
 
-export async function generateAgentAcc(rainbowSDK, userEmailAccount, userPassword, userFirstName, userLastName){
+async function generateAgentAcc(rainbowSDK, userEmailAccount, userPassword, userFirstName, userLastName){
   try {
     let user = await rainbowSDK.admin.createUserInCompany(userEmailAccount, userPassword, userFirstName, userLastName);
     console.log(user);
@@ -83,7 +83,7 @@ export async function generateAgentAcc(rainbowSDK, userEmailAccount, userPasswor
   }
 }
 
-export async function saveNewAgentToDB(user, personalInfo, details){
+async function saveNewAgentToDB(user, personalInfo, details){
   try{
     await db.addAgent(user.id, personalInfo);
     await db.initialiseAgentDetails(user.id, details);
@@ -99,4 +99,28 @@ export async function saveNewAgentToDB(user, personalInfo, details){
   }
 }
 
-export 
+function changeContactPresence(contact){
+  try{
+    if(contact.presence === "online"){
+      console.log(`${contact.id} is available`);
+      db.changeAvailability(contact.id, 1);
+    }
+
+    else if(contact.presence === "offline" || contact.presence === "busy"){
+      console.log(`${contact.id} is not available`);
+      db.changeAvailability(contact.id, 0);
+    }
+  } catch (e) {
+    console.log(e);
+  }
+}
+
+module.exports = {
+  generateGuestAcc,
+  generateAgentAcc,
+  updateAgentFromDB,
+  deleteAgentFromRainbow,
+  deleteAgentFromDB,
+  saveNewAgentToDB,
+  changeContactPresence
+};

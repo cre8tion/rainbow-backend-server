@@ -1,13 +1,14 @@
 const request = require('supertest');
 
 /*
- Start Server before running ANY tests
+ Start Server before running ANY tests (If not called by npm run ci)
  */
 
 describe('API Endpoints',() =>{
   let server;
   beforeAll( async () => {
-    //await new Promise(resolve => setTimeout(resolve, 10000));
+    await new Promise(resolve => setTimeout(resolve, 10000));
+    // Wait for most Rainbow NodeJS debug messages to load
     server = request('http://localhost:8080');
   });
 
@@ -26,7 +27,7 @@ describe('API Endpoints',() =>{
   describe('Agent Account Creation API', () => {
 
     it('should create an agent account without details', async() => {
-      //TODO
+      // Test successful ONLY IF email account is replaced with a new unique address
       const res = await server.post('/api/v1/agent_creation')
         .set('Accept', 'application/json')
         .send({
@@ -43,7 +44,7 @@ describe('API Endpoints',() =>{
     });
 
     it('should create an agent account with details', async() => {
-      //TODO
+      // Test successful ONLY IF email account is replaced with a new unique address
       const res = await server.post('/api/v1/agent_creation')
         .set('Accept', 'application/json')
         .send({
@@ -178,13 +179,9 @@ describe('API Endpoints',() =>{
   });
 
   describe('Agent Account Delete API', () => {
-    let server;
-    beforeAll( async () => {
-      server = request('http://localhost:8080');
-    });
 
     it('should delete an agent account', async() => {
-      // AgentId must be already present in DB
+      // Test successful ONLY IF AgentId must be already present in DB
       const res = await server.post('/api/v1/delete_agent')
         .set('Accept', 'application/json')
         .send({
