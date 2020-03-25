@@ -1,0 +1,550 @@
+{
+	"info": {
+		"_postman_id": "b6aafeb7-2d70-4b85-9309-72b12d5711aa",
+		"name": "failure tests",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Admin",
+			"item": [
+				{
+					"name": "Generate Agent without Details for Admin Site",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "f7beb743-19aa-4a6f-89f4-87c7f049ca28",
+								"exec": [
+									"let details = pm.iterationData.get('details');\r",
+									"pm.variables.set('details', JSON.stringify(details));\r",
+									"\r",
+									"let personalInfo = pm.iterationData.get('personalInfo');\r",
+									"pm.variables.set('personalInfo', JSON.stringify(personalInfo));\r",
+									"\r",
+									"pm.variables.set('firstname', (personalInfo.firstname));\r",
+									"pm.variables.set('lastname', (personalInfo.lastname));\r",
+									"pm.variables.set('email', (personalInfo.email));"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "3ceb007a-2d38-4537-b88d-c77576131f61",
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"var s = pm.variables.get(\"responseSchema\");",
+									"var Ajv = require('ajv'),",
+									"    ajv = new Ajv({logger: console, allErrors: true}),",
+									"    schema = s;",
+									"",
+									"pm.test('Valid Schema', function() {",
+									"    pm.expect(ajv.validate(schema, jsonData)).to.be.true;",
+									"});",
+									"",
+									"pm.test(\"Status code is 400\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									"",
+									"pm.test(\"Validated Failure\", function () {",
+									"    pm.expect(jsonData.success).to.be.false;",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"userEmailAccount\":\"{{email}}\",\n\t\"userPassword\": \"{{password}}\",\n\t\"userFirstName\": \"{{firstname}}\",\n\t\"userLastName\": \"{{lastname}}\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/api/v1/agent_creation",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"agent_creation"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Generate Agent with Details for Admin Site",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "54c7b4a1-2afb-450b-ad69-846d1d37e4a7",
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"var s = pm.variables.get(\"responseSchema\");",
+									"var Ajv = require('ajv'),",
+									"    ajv = new Ajv({logger: console, allErrors: true}),",
+									"    schema = s;",
+									"",
+									"pm.test('Valid Schema', function() {",
+									"    pm.expect(ajv.validate(schema, jsonData)).to.be.true;",
+									"});",
+									"",
+									"pm.test(\"Status code is 400\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									"",
+									"pm.test(\"Validated Failure\", function () {",
+									"    pm.expect(jsonData.success).to.be.false;",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "a5a72cf1-cf9b-4221-9de9-f3cfbb97c223",
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"userEmailAccount\":\"{{email}}\",\n\t\"userPassword\": \"{{password}}\",\n\t\"userFirstName\": \"{{firstname}}\",\n\t\"userLastName\": \"{{lastname}}\",\n\t\"details\": {{details}}\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/api/v1/agent_creation",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"agent_creation"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Agent for Admin Site",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "912faee0-569c-44e3-af54-1384cdfa533d",
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"",
+									"var s = pm.variables.get(\"responseSchema\");",
+									"s.data = pm.variables.get(\"agentDetailSchema\");",
+									"var Ajv = require('ajv'),",
+									"    ajv = new Ajv({logger: console, allErrors: true}),",
+									"    schema = s;",
+									"",
+									"pm.test('Valid Schema', function() {",
+									"    pm.expect(ajv.validate(schema, jsonData)).to.be.true;",
+									"});",
+									"",
+									"pm.test(\"Status code is 400\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									"",
+									"pm.test(\"Validated Failure\", function () {",
+									"    pm.expect(jsonData.success).to.be.false;",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"rainbow_id\": \"{{rainbow_id}}\",\n    \"personalInfo\": {\n    \t\"firstname\": \"{{firstname}}\",\n    \t\"lastname\": \"{{lastname}}\",\n    \t\"email\": \"{{email}}\"\n    },\n    \"details\": {{details}}\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/api/v1/update_agent",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"update_agent"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Agent for Admin Site",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "c26f9859-b134-4f6c-83c4-0df102cb068c",
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"var s = pm.variables.get(\"responseSchema\");",
+									"var Ajv = require('ajv'),",
+									"    ajv = new Ajv({logger: console, allErrors: true}),",
+									"    schema = s;",
+									"",
+									"pm.test('Valid Schema', function() {",
+									"    pm.expect(ajv.validate(schema, jsonData)).to.be.true;",
+									"});",
+									"",
+									"pm.test(\"Status code is 400\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									"",
+									"pm.test(\"Validated Failure\", function () {",
+									"    pm.expect(jsonData.success).to.be.false;",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"userId\": \"{{rainbow_id}}\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/api/v1/delete_agent",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"delete_agent"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Change Availiability",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "ee06837d-3def-4bdf-bb83-151dd6fe5010",
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"var Ajv = require('ajv'),",
+									"    ajv = new Ajv({logger: console, allErrors: true}),",
+									"    schema = pm.variables.get(\"responseSchema\");",
+									"    ",
+									"pm.test('Valid Schema', function() {",
+									"    pm.expect(ajv.validate(schema, jsonData)).to.be.true;",
+									"});",
+									"",
+									"pm.test(\"Status code is 400\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									"",
+									"pm.test(\"Validated Failure\", function () {",
+									"    pm.expect(jsonData.success).to.be.false;",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "2d35c0c9-b6ce-4490-9e5c-c11b5a658de8",
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/db/agent/{{rainbow_id}}/availability/{{availability}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"db",
+								"agent",
+								"{{rainbow_id}}",
+								"availability",
+								"{{availability}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "View Single Agent's Info",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "5cce61d9-a6b5-4e5a-89a4-4b2844b355b0",
+								"exec": [
+									"var s = pm.variables.get(\"responseSchema\");",
+									"s.data = pm.variables.get(\"agentDetailSchema\");",
+									"",
+									"var jsonData = pm.response.json();",
+									"var Ajv = require('ajv'),",
+									"    ajv = new Ajv({logger: console, allErrors: true}),",
+									"    schema = s;",
+									"    ",
+									"pm.test('Valid Schema', function() {",
+									"    pm.expect(ajv.validate(schema, jsonData)).to.be.true;",
+									"});",
+									"",
+									"pm.test(\"Status code is 400\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									"",
+									"pm.test(\"Validated Failure\", function () {",
+									"    pm.expect(jsonData.success).to.be.false;",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/db/agent/{{rainbow_id}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"db",
+								"agent",
+								"{{rainbow_id}}"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "For admin website",
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "User",
+			"item": [
+				{
+					"name": "Calling Routing Engine",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "c98c8ffe-e87f-46a2-8786-c9d08fa7a1f8",
+								"exec": [
+									"// var details = pm.variables.get(\"tempUpdateAgentJSON\");",
+									"",
+									"// var routeFiltersArray = [];",
+									"",
+									"// for (var key in details) {",
+									"//     for (var innerKey in details[key]) {",
+									"//         console.log(innerKey);",
+									"//         if (details[key][innerKey] == 1) {",
+									"//             routeFiltersArray.push(innerKey);",
+									"//         }",
+									"//     }",
+									"// }",
+									"// for (var key in details) {",
+									"//     if (key != \"agent_id\") {",
+									"//         if (details[key] == 1) {",
+									"//             routeFiltersArray.push(key);",
+									"//         }",
+									"//     }",
+									"// }",
+									"// console.log(routeFiltersArray);",
+									"// var routeFilters = routeFiltersArray.join(\"+\");",
+									"// console.log(routeFilters);",
+									"// pm.variables.set(\"routeFilters\", routeFilters);",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "1f3aba2f-3c15-45c3-9748-61e4ae85bd48",
+								"exec": [
+									"var s = pm.variables.get(\"responseSchema\");",
+									"",
+									"var jsonData = pm.response.json();",
+									"var Ajv = require('ajv'),",
+									"    ajv = new Ajv({logger: console, allErrors: true}),",
+									"    schema = s;",
+									"    ",
+									"pm.test('Valid Schema', function() {",
+									"    pm.expect(ajv.validate(schema, jsonData)).to.be.true;",
+									"});",
+									"",
+									"pm.test(\"Status code is 400\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									"",
+									"pm.test(\"Validated Failure\", function () {",
+									"    pm.expect(jsonData.success).to.be.false;",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/db/route/{{routeFilters}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"db",
+								"route",
+								"{{routeFilters}}"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Calling Routing Engine [Static Params]",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{url}}/db/route/english+bank_statement",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"db",
+										"route",
+										"english+bank_statement"
+									]
+								}
+							},
+							"_postman_previewlanguage": null,
+							"header": null,
+							"cookie": [],
+							"body": null
+						}
+					]
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Ping",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "977f89b7-0e37-4f73-b262-9e76706623e1",
+						"exec": [
+							"// pm.sendRequest(pm.variables.get(\"url\") + \"/db/test\", function (err, response) {",
+							"//     console.log(\"hello\");",
+							"//     console.log(response);",
+							"// });",
+							"pm.test(\"Body is correct\", function () {",
+							"    pm.response.to.have.body(\"helloworld\");",
+							"});",
+							"",
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{url}}/db/test",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"db",
+						"test"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"protocolProfileBehavior": {}
+}
