@@ -1,9 +1,9 @@
 [{
-    "rainbow_id": "fake_rainbow_id11",
+    "rainbow_id": "fake_rainbow_id101",
     "personalInfo": {
     	"firstname": "agent",
     	"lastname": "eleven",
-    	"email": "fake11@fake.com"
+    	"email": "fake101@fake.com"
     },
     "details": {
     	"languages": {
@@ -18,5 +18,6 @@
     	}
     },
     "availability": 1,
-
+	"password": "ASd23ads!",
+	"routeFilters": "english+chinese+insurance"
 }]

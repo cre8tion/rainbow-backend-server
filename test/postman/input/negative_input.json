@@ -1,0 +1,23 @@
+[{
+    "rainbow_id": "fake",
+    "personalInfo": {
+    	"firstname": "fake",
+    	"lastname": "fake",
+    	"email": "fake"
+    },
+    "details": {
+    	"languages": {
+    		"english": 0,
+    		"chinese": 0,
+    		"malay": 0
+    	},
+    	"skills": {
+    		"insurance": 0,
+    		"bank_statement": 0,
+    		"fraud": 0
+    	}
+    },
+    "availability": 0,
+	"password": "invalid",
+	"routeFilters": "nonexistentFilter"
+}]

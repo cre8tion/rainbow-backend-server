@@ -1,0 +1,109 @@
+{
+	"id": "79db17b5-b699-44f8-82ff-79b6188869ab",
+	"values": [
+		{
+			"key": "agentDetailSchema",
+			"value": {
+				"additionalProperties": false,
+				"properties": {
+					"agent_id": "string",
+					"availability": "integer",
+					"bank_statement": "integer",
+					"chinese": "integer",
+					"email": [
+						"string",
+						"null"
+					],
+					"english": "integer",
+					"firstname": [
+						"string",
+						"null"
+					],
+					"fraud": "integer",
+					"insurance": "integer",
+					"lastname": [
+						"string",
+						"null"
+					],
+					"malay": "integer"
+				},
+				"required": [
+					"agent_id",
+					"firstname",
+					"lastname",
+					"email",
+					"availability",
+					"english",
+					"chinese",
+					"malay",
+					"insurance",
+					"bank_statement",
+					"fraud"
+				],
+				"type": "object"
+			},
+			"enabled": true
+		},
+		{
+			"key": "responseSchema",
+			"value": {
+				"additionalProperties": false,
+				"description": "The root schema comprises the entire JSON document.",
+				"properties": {
+					"data": {
+						"additionalProperties": true,
+						"examples": [
+							{},
+							[
+								{
+									"bank_statement": 1,
+									"chinese": 1,
+									"email": "fake11@fake.com",
+									"english": 1,
+									"firstname": "agent",
+									"fraud": 1,
+									"insurance": 1,
+									"lastname": "eleven",
+									"malay": 1,
+									"rainbow_id": "fake_rainbow_id11"
+								}
+							]
+						],
+						"type": [
+							"object",
+							"array"
+						]
+					},
+					"message": {
+						"examples": [
+							"successs",
+							null
+						],
+						"type": [
+							"string",
+							"null"
+						]
+					},
+					"success": {
+						"examples": [
+							true,
+							false
+						],
+						"type": "boolean"
+					}
+				},
+				"required": [
+					"success",
+					"message",
+					"data"
+				],
+				"type": "object"
+			},
+			"enabled": true
+		}
+	],
+	"name": "My Workspace Globals",
+	"_postman_variable_scope": "globals",
+	"_postman_exported_at": "2020-03-25T04:12:15.505Z",
+	"_postman_exported_using": "Postman/7.20.1"
+}
