@@ -1,5 +1,4 @@
-import {updateAgentFromDB, deleteAgentFromDB, generateGuestAcc, deleteAgentFromRainbow,
-  generateAgentAcc, saveNewAgentToDB, changeContactPresence} from "../controllers/apiController";
+import * as apiController from "../controllers/apiController";
 
 var express = require('express');
 var router = express.Router();
@@ -15,18 +14,18 @@ rainbowSDK.events.on("rainbow_onready", () => {
   let contacts = rainbowSDK.contacts.getAll();
 
   for(let i = 0; i <contacts.length; i++){
-      changeContactPresence(contacts[i]);
+      apiController.changeContactPresence(contacts[i]);
   }
 });
 
 rainbowSDK.events.on("rainbow_oncontactpresencechanged", (contact) => {
-  changeContactPresence(contact);
+  apiController.changeContactPresence(contact);
 });
 
 /* GET guest account. */
 router.get('/v1/guest_creation', async function(req, res, next) {
   try{
-    let json = await generateGuestAcc(rainbowSDK);
+    let json = await apiController.generateGuestAcc(rainbowSDK);
     return res.send(json);
   }catch (e) {
     return res.status(400).send({
@@ -42,13 +41,13 @@ router.post('/v1/agent_creation', async function(req, res, next) {
   try{
     const {userEmailAccount, userPassword, userFirstName, userLastName} = req.body;
     const { details={} } = req.body || {};
-    let user = await generateAgentAcc(rainbowSDK, userEmailAccount, userPassword, userFirstName, userLastName);
+    let user = await apiController.generateAgentAcc(rainbowSDK, userEmailAccount, userPassword, userFirstName, userLastName);
     const personalInfo = {
       "firstname" : userFirstName,
       "lastname" : userLastName,
       "email" : userEmailAccount
     };
-    let json = await saveNewAgentToDB(user, personalInfo, details);
+    let json = await apiController.saveNewAgentToDB(user, personalInfo, details);
 
     return res.send(json);
   }catch (e) {
@@ -63,10 +62,10 @@ router.post('/v1/agent_creation', async function(req, res, next) {
 router.post('/v1/delete_agent', async function(req, res, next) {
   try{
     const { userId } = req.body;
-    let result = await deleteAgentFromRainbow(rainbowSDK, userId);
+    let result = await apiController.deleteAgentFromRainbow(rainbowSDK, userId);
     if(result === true){
       console.log("Deleted Agent from rainbow");
-      let json = await deleteAgentFromDB(userId);
+      let json = await apiController.deleteAgentFromDB(userId);
       return res.send(json);
     }
     else{
@@ -88,7 +87,7 @@ router.post('/v1/delete_agent', async function(req, res, next) {
 
 router.post('/v1/update_agent', async function(req, res, next) {
   try{
-    let json = await updateAgentFromDB(req.body);
+    let json = await apiController.updateAgentFromDB(req.body);
     return res.send(json);
   } catch (e){
     return res.status(400).send({
