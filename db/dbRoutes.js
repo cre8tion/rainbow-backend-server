@@ -79,6 +79,24 @@ router.get('/route/:filters', async(req, res, next) => {
     }
 })
 
+router.get('/route/', async(req, res, next) => {
+    try {
+        let filterArray = [];
+        console.log(filterArray);
+        
+        let results = await db.routeForAgent(filterArray);
+        if (results != null) {
+            db.changeAvailability(results.selectedAgent,0);
+            successHandler(res, results, "success");
+        } else {
+            successHandler(res, {}, "There are no suitable agents currently.");
+        } 
+    } catch(e) {
+        console.log(e);
+        next(new DefaultError(e));
+    }
+})
+
 
 /* ADMINISTRATIVE FUNCTIONS:
 * VIEW AGENT

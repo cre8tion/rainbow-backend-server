@@ -110,8 +110,32 @@ let filterAgents = (filters) => {
     })
 };
 
+let freeAgents = () => {
+    return new Promise((resolve, reject) => {
+
+        let toBeQueried = `SELECT * FROM (
+                                SELECT * FROM agent
+                                LEFT JOIN languages USING(agent_id)
+                                LEFT JOIN skills USING(agent_id)) A
+                            WHERE availability = 1;`;
+        pool.query(toBeQueried, (err, results) => {
+                    if (err) {
+                        console.log('err');
+                        return reject(err);
+                    }
+
+                    return resolve(results);
+        });
+    })
+};
+
 let routeForAgent = async (filters) => {
-    let suitableAgents = await filterAgents(filters);
+    if (filters[0] == null) {
+        console.log("empty filters")
+        var suitableAgents = await freeAgents();
+    } else {
+        var suitableAgents = await filterAgents(filters);
+    }
     console.log(suitableAgents);
     if (suitableAgents.length == 0) return null;
 
