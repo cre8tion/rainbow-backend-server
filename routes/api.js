@@ -6,7 +6,6 @@ let RainbowSDK = require('rainbow-node-sdk');
 const {options} = require('../config/config');
 let rainbowSDK = new RainbowSDK(options);
 
-
 rainbowSDK.start();
 
 rainbowSDK.events.on("rainbow_onready", () => {

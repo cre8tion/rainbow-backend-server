@@ -106,9 +106,14 @@ function changeContactPresence(contact){
       db.changeAvailability(contact.id, 1);
     }
 
-    else if(contact.presence === "offline" || contact.presence === "busy"){
+    else if(contact.presence === "offline"){
       console.log(`${contact.id} is not available`);
       db.changeAvailability(contact.id, 0);
+    }
+
+    else if(contact.presence === "busy"){
+      console.log(`${contact.id} is not available`);
+      db.changeAvailability(contact.id, 2);
     }
   } catch (e) {
     console.log(e);
