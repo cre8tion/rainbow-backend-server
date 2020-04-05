@@ -68,7 +68,8 @@ router.get('/route/:filters', async(req, res, next) => {
         
         let results = await db.routeForAgent(filterArray);
         if (results != null) {
-            db.changeAvailability(results.selectedAgent,0);
+            db.changeAvailability(results.selectedAgent,2);
+            db.incrementCount(results.selectedAgent);
             successHandler(res, results, "success");
         } else {
             successHandler(res, {}, "There are no suitable agents currently.");
@@ -86,7 +87,8 @@ router.get('/route/', async(req, res, next) => {
         
         let results = await db.routeForAgent(filterArray);
         if (results != null) {
-            db.changeAvailability(results.selectedAgent,0);
+            db.changeAvailability(results.selectedAgent,2);
+            db.incrementCount(results.selectedAgent);
             successHandler(res, results, "success");
         } else {
             successHandler(res, {}, "There are no suitable agents currently.");

@@ -117,7 +117,8 @@ let freeAgents = () => {
                                 SELECT * FROM agent
                                 LEFT JOIN languages USING(agent_id)
                                 LEFT JOIN skills USING(agent_id)) A
-                            WHERE availability = 1;`;
+                            WHERE availability = 1
+                            ORDER BY count ASC;`;
         pool.query(toBeQueried, (err, results) => {
                     if (err) {
                         console.log('err');
@@ -259,6 +260,30 @@ let changeAvailability = (rainbow_id, availability) => {
     })
 };
 
+let incrementCount = (rainbow_id) => {
+    return new Promise((resolve, reject) => {
+        pool.query(`SELECT count FROM agent WHERE agent_id = "${rainbow_id}";`,
+                    (err, countResults) => {
+                        if (err || countResults[0] == null) {
+                            console.log('err');
+                            return reject(err);
+                        }
+                        console.log("hihi");
+                        console.log(countResults[0].count);
+                        pool.query(`UPDATE agent SET count = ${countResults[0].count+1} WHERE agent_id = "${rainbow_id}";`,
+                        (err, results) => {
+                            if (err) {
+                                console.log('err');
+                                return reject(err);
+                            }
+                            console.log(results);
+                            checkChangesToDb(results, resolve, reject);
+                        })
+                    })
+        
+    })
+};
+
 /* DELETE method */
 let deleteAgent = (rainbow_id) => {
     return new Promise((resolve, reject) => {
@@ -305,5 +330,6 @@ module.exports = {
     updateAgentDetails,
     deleteAgent,
     changeAvailability,
+    incrementCount,
     routeForAgent
 };
