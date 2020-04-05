@@ -64,16 +64,10 @@ router.get('/route/:filters', async(req, res, next) => {
     try {
         let filters = req.params.filters;
         let filterArray = filters.split('+');
-        console.log(filterArray);
         
         let results = await db.routeForAgent(filterArray);
-        if (results != null) {
-            db.changeAvailability(results.selectedAgent,2);
-            db.incrementCount(results.selectedAgent);
-            successHandler(res, results, "success");
-        } else {
-            successHandler(res, {}, "There are no suitable agents currently.");
-        } 
+        successHandler(res, results, "success");
+        
     } catch(e) {
         console.log(e);
         next(new DefaultError(e));
@@ -83,16 +77,9 @@ router.get('/route/:filters', async(req, res, next) => {
 router.get('/route/', async(req, res, next) => {
     try {
         let filterArray = [];
-        console.log(filterArray);
         
         let results = await db.routeForAgent(filterArray);
-        if (results != null) {
-            db.changeAvailability(results.selectedAgent,2);
-            db.incrementCount(results.selectedAgent);
-            successHandler(res, results, "success");
-        } else {
-            successHandler(res, {}, "There are no suitable agents currently.");
-        } 
+        successHandler(res, results, "success");
     } catch(e) {
         console.log(e);
         next(new DefaultError(e));

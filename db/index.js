@@ -130,6 +130,32 @@ let freeAgents = () => {
     })
 };
 
+let checkIfBusyAgent = (filters) => {
+    return new Promise((resolve, reject) => {
+
+        var filterArray = [];
+        for (var i in filters) {
+            console.log(filters[i]);
+            filterArray.push(`${filters[i]} = 1`);
+        }
+
+        let toBeQueried = `SELECT * FROM (
+                                SELECT * FROM agent
+                                LEFT JOIN languages USING(agent_id)
+                                LEFT JOIN skills USING(agent_id)) A
+                            WHERE availability = 2 AND ${filterArray.join(' AND ')};`;
+        pool.query(toBeQueried, (err, results) => {
+                    if (err) {
+                        console.log('err');
+                        return reject(err);
+                    }
+                    if (results[0] == null) return resolve(false);
+                    else return resolve(true);
+        });
+    })
+
+}
+
 let routeForAgent = async (filters) => {
     if (filters[0] == null) {
         console.log("empty filters")
@@ -138,9 +164,27 @@ let routeForAgent = async (filters) => {
         var suitableAgents = await filterAgents(filters);
     }
     console.log(suitableAgents);
-    if (suitableAgents.length == 0) return null;
-
-    return {selectedAgent: suitableAgents[0].agent_id};
+    if (suitableAgents.length == 0) {
+        if (await checkIfBusyAgent(filters)) {
+            let resJson = {
+                status: 2
+            }
+            return resJson
+        } else {
+            let resJson = {
+                status: 0
+            }
+            return resJson
+        }
+    }
+    let selectedAgent = suitableAgents[0].agent_id;
+    changeAvailability(selectedAgent,2);
+    incrementCount(selectedAgent);
+    let resJson = {
+        selectedAgent: selectedAgent,
+        status: 1
+    }
+    return resJson;
 };
 
 
@@ -268,7 +312,6 @@ let incrementCount = (rainbow_id) => {
                             console.log('err');
                             return reject(err);
                         }
-                        console.log("hihi");
                         console.log(countResults[0].count);
                         pool.query(`UPDATE agent SET count = ${countResults[0].count+1} WHERE agent_id = "${rainbow_id}";`,
                         (err, results) => {
