@@ -503,47 +503,6 @@
 				}
 			],
 			"protocolProfileBehavior": {}
-		},
-		{
-			"name": "Ping",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"id": "977f89b7-0e37-4f73-b262-9e76706623e1",
-						"exec": [
-							"// pm.sendRequest(pm.variables.get(\"url\") + \"/db/test\", function (err, response) {",
-							"//     console.log(\"hello\");",
-							"//     console.log(response);",
-							"// });",
-							"pm.test(\"Body is correct\", function () {",
-							"    pm.response.to.have.body(\"helloworld\");",
-							"});",
-							"",
-							"pm.test(\"Status code is 200\", function () {",
-							"    pm.response.to.have.status(200);",
-							"});",
-							""
-						],
-						"type": "text/javascript"
-					}
-				}
-			],
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "{{url}}/db/test",
-					"host": [
-						"{{url}}"
-					],
-					"path": [
-						"db",
-						"test"
-					]
-				}
-			},
-			"response": []
 		}
 	],
 	"protocolProfileBehavior": {}

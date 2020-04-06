@@ -69,11 +69,13 @@ let joinAllTables = () => {
 
 let query = (keyTerm) => {
     return new Promise((resolve, reject) => {
-        pool.query(`SELECT * FROM
-                        (SELECT * FROM agent
-                        LEFT JOIN languages USING(agent_id)
-                        LEFT JOIN skills USING(agent_id)) A
-                    WHERE ${keyTerm} = 1;`, (err, results) => {
+        let q = `SELECT * FROM 
+                (SELECT * FROM agent 
+                LEFT JOIN languages USING(agent_id) 
+                LEFT JOIN skills USING(agent_id)) A 
+                WHERE ?? = 1;`;
+        let inserts = [keyTerm];
+        pool.query(mysql.format(q, inserts), (err, results) => {
            if(err) {
                console.log('err');
                return reject(err);
@@ -91,15 +93,15 @@ let filterAgents = (filters) => {
         var filterArray = [];
         for (var i in filters) {
             console.log(filters[i]);
-            filterArray.push(`${filters[i]} = 1`);
+            filterArray.push(`${pool.escapeId(filters[i])} = 1`);
         }
-
-        let toBeQueried = `SELECT * FROM (
-                                SELECT * FROM agent
-                                LEFT JOIN languages USING(agent_id)
-                                LEFT JOIN skills USING(agent_id)) A
-                            WHERE availability = 1 AND ${filterArray.join(' AND ')};`;
-        pool.query(toBeQueried, (err, results) => {
+        let q = `SELECT * FROM (
+                    SELECT * FROM agent
+                    LEFT JOIN languages USING(agent_id)
+                    LEFT JOIN skills USING(agent_id)) A
+                WHERE availability = 1 AND ${filterArray.join(' AND ')}
+                ORDER BY count ASC;`;
+        pool.query(q, (err, results) => {
                     if (err) {
                         console.log('err');
                         return reject(err);
@@ -113,13 +115,13 @@ let filterAgents = (filters) => {
 let freeAgents = () => {
     return new Promise((resolve, reject) => {
 
-        let toBeQueried = `SELECT * FROM (
-                                SELECT * FROM agent
-                                LEFT JOIN languages USING(agent_id)
-                                LEFT JOIN skills USING(agent_id)) A
-                            WHERE availability = 1
-                            ORDER BY count ASC;`;
-        pool.query(toBeQueried, (err, results) => {
+        let q = `SELECT * FROM (
+                    SELECT * FROM agent
+                    LEFT JOIN languages USING(agent_id)
+                    LEFT JOIN skills USING(agent_id)) A
+                WHERE availability = 1
+                ORDER BY count ASC;`;
+        pool.query(q, (err, results) => {
                     if (err) {
                         console.log('err');
                         return reject(err);
@@ -136,15 +138,14 @@ let checkIfBusyAgent = (filters) => {
         var filterArray = [];
         for (var i in filters) {
             console.log(filters[i]);
-            filterArray.push(`${filters[i]} = 1`);
+            filterArray.push(`${pool.escapeId(filters[i])} = 1`);
         }
-
-        let toBeQueried = `SELECT * FROM (
-                                SELECT * FROM agent
-                                LEFT JOIN languages USING(agent_id)
-                                LEFT JOIN skills USING(agent_id)) A
-                            WHERE availability = 2 AND ${filterArray.join(' AND ')};`;
-        pool.query(toBeQueried, (err, results) => {
+        let q = `SELECT * FROM (
+                    SELECT * FROM agent
+                    LEFT JOIN languages USING(agent_id)
+                    LEFT JOIN skills USING(agent_id)) A
+                WHERE availability = 2 AND ${filterArray.join(' AND ')};`;
+        pool.query(q, (err, results) => {
                     if (err) {
                         console.log('err');
                         return reject(err);
@@ -192,10 +193,11 @@ let routeForAgent = async (filters) => {
 
 let addAgent = (rainbow_id, personalInfo) => {
     return new Promise((resolve, reject) => {
-
-        pool.query(`INSERT INTO agent(agent_id, firstname, lastname, email)
-                    VALUES ("${rainbow_id}", "${personalInfo.firstname}", "${personalInfo.lastname}", "${personalInfo.email}");`,
-                    (err, results) => {
+        let q = `INSERT INTO agent(agent_id, firstname, lastname, email)
+        VALUES (?, ?, ?, ?);`;
+        let inserts = [rainbow_id, personalInfo.firstname, personalInfo.lastname, personalInfo.email];
+        q = mysql.format(q, inserts);
+        pool.query(q, (err, results) => {
                         if(err) {
                             console.log('err');
                             return reject(err);
@@ -230,14 +232,13 @@ let initialiseAgentDetails = (rainbow_id, details) => {
                 }
             }
         }
-
-        pool.query(`INSERT INTO languages(agent_id, english, chinese, malay)
-                    VALUES ("${rainbow_id}", "${dir.languages.english}",
-                    "${dir.languages.chinese}", "${dir.languages.malay}");
-                    INSERT INTO skills(agent_id, insurance, bank_statement, fraud)
-                    VALUES ("${rainbow_id}", "${dir.skills.insurance}",
-                    "${dir.skills.bank_statement}", "${dir.skills.fraud}");`,
-                    (err, results) => {
+        let q = `INSERT INTO languages(agent_id, english, chinese, malay)
+        VALUES (?, ?, ?, ?);
+        INSERT INTO skills(agent_id, insurance, bank_statement, fraud)
+        VALUES (?, ?, ?, ?);`;
+        let inserts = [rainbow_id, dir.languages.english, dir.languages.chinese, dir.languages.malay, rainbow_id, dir.skills.insurance, dir.skills.bank_statement, dir.skills.fraud];
+        q = mysql.format(q, inserts);
+        pool.query(q, (err, results) => {
                         if(err) {
                             console.log('err');
                             return reject(err);
@@ -258,7 +259,7 @@ let updateAgentDetails = (toBeChangedJson) => {
         if (toBeChangedJson.hasOwnProperty("personalInfo")) {
             var currentUpdateArray = [];
             for (var key in toBeChangedJson.personalInfo) {
-                currentUpdateArray.push(`${key} = '${toBeChangedJson.personalInfo[key]}'`);
+                currentUpdateArray.push(`${pool.escapeId(key)} = ${pool.escape(toBeChangedJson.personalInfo[key])}`);
             }
             let currentUpdate = `UPDATE agent SET ${currentUpdateArray.join(', ')} WHERE (agent_id = '${toBeChangedJson.rainbow_id}');`;
             overallArray.push(currentUpdate);
@@ -270,9 +271,9 @@ let updateAgentDetails = (toBeChangedJson) => {
                 var currentUpdateArray = [];
                 console.log(rootDir[key]);
                 for (var innerKey in rootDir[key]) {
-                    currentUpdateArray.push(`${innerKey} = '${rootDir[key][innerKey]}'`);
+                    currentUpdateArray.push(`${pool.escapeId(innerKey)} = ${pool.escape(rootDir[key][innerKey])}`);
                 }
-                let currentUpdate = `UPDATE ${key} SET ` + currentUpdateArray.join(', ') +` WHERE (agent_id = '${toBeChangedJson.rainbow_id}');`;
+                let currentUpdate = `UPDATE ${pool.escapeId(key)} SET ` + currentUpdateArray.join(', ') +` WHERE (agent_id = '${toBeChangedJson.rainbow_id}');`;
                 overallArray.push(currentUpdate);
             }
         }
@@ -292,8 +293,10 @@ let updateAgentDetails = (toBeChangedJson) => {
 
 let changeAvailability = (rainbow_id, availability) => {
     return new Promise((resolve, reject) => {
-        pool.query(`UPDATE agent SET availability = ${availability} WHERE agent_id = "${rainbow_id}";`,
-                    (err, results) => {
+        let q = `UPDATE agent SET availability = ? WHERE agent_id = ?;`;
+        let inserts = [availability, rainbow_id];
+        q = mysql.format(q, inserts);
+        pool.query(q, (err, results) => {
                         if (err) {
                             console.log('err');
                             return reject(err);
@@ -306,8 +309,10 @@ let changeAvailability = (rainbow_id, availability) => {
 
 let incrementCount = (rainbow_id) => {
     return new Promise((resolve, reject) => {
-        pool.query(`SELECT count FROM agent WHERE agent_id = "${rainbow_id}";`,
-                    (err, countResults) => {
+        let q = `SELECT count FROM agent WHERE agent_id = ?;`;
+        let inserts = [rainbow_id];
+        q = mysql.format(q, inserts);
+        pool.query(q, (err, countResults) => {
                         if (err || countResults[0] == null) {
                             console.log('err');
                             return reject(err);
@@ -330,10 +335,12 @@ let incrementCount = (rainbow_id) => {
 /* DELETE method */
 let deleteAgent = (rainbow_id) => {
     return new Promise((resolve, reject) => {
-        pool.query(`DELETE FROM languages WHERE (agent_id = '${rainbow_id}');
-                    DELETE FROM skills WHERE (agent_id = '${rainbow_id}');
-                    DELETE FROM agent WHERE (agent_id = '${rainbow_id}');`,
-                    (err, results) => {
+        let q = `DELETE FROM languages WHERE (agent_id = ?);
+        DELETE FROM skills WHERE (agent_id = ?);
+        DELETE FROM agent WHERE (agent_id = ?);`
+        let inserts = [rainbow_id, rainbow_id, rainbow_id]
+        q = mysql.format(q, inserts);
+        pool.query(q, (err, results) => {
                         if(err) {
                             console.log('err');
                             return reject(err);

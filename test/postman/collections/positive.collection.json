@@ -1,7 +1,7 @@
 {
 	"info": {
 		"_postman_id": "46d8123f-27ea-49f0-8d88-b655ea65ff53",
-		"name": "admin/user Test",
+		"name": "positive tests",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
@@ -637,47 +637,6 @@
 				}
 			],
 			"protocolProfileBehavior": {}
-		},
-		{
-			"name": "Ping",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"id": "977f89b7-0e37-4f73-b262-9e76706623e1",
-						"exec": [
-							"// pm.sendRequest(pm.variables.get(\"url\") + \"/db/test\", function (err, response) {",
-							"//     console.log(\"hello\");",
-							"//     console.log(response);",
-							"// });",
-							"pm.test(\"Body is correct\", function () {",
-							"    pm.response.to.have.body(\"helloworld\");",
-							"});",
-							"",
-							"pm.test(\"Status code is 200\", function () {",
-							"    pm.response.to.have.status(200);",
-							"});",
-							""
-						],
-						"type": "text/javascript"
-					}
-				}
-			],
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "{{url}}/db/test",
-					"host": [
-						"{{url}}"
-					],
-					"path": [
-						"db",
-						"test"
-					]
-				}
-			},
-			"response": []
 		}
 	],
 	"protocolProfileBehavior": {}
