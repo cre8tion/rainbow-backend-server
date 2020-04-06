@@ -351,6 +351,36 @@ let deleteAgent = (rainbow_id) => {
     })
 };
 
+/* RATE AGENTS */
+let rateAgent = (rainbow_id, rating) => {
+    return new Promise((resolve, reject) => {
+        let q = `SELECT rating, rating_count FROM agent WHERE agent_id = ?;`;
+        let inserts = [rainbow_id];
+        q = mysql.format(q, inserts);
+        pool.query(q, (err, results) => {
+                        if (err || results[0] == null) {
+                            console.log('err');
+                            return reject(err);
+                        }
+                        let prev_rating = results[0].rating;
+                        let prev_count = results[0].rating_count;
+                        let after_rating = (parseFloat(prev_rating * prev_count) + parseInt(rating))/(prev_count + 1);
+                        let q = `UPDATE agent SET rating_count = ${prev_count+1} WHERE agent_id = ?;
+                                 UPDATE agent SET rating = ${after_rating} WHERE agent_id = ?;`;
+                        let inserts = [rainbow_id, rainbow_id];
+                        q = mysql.format(q, inserts);
+                        pool.query(q, (err, results) => {
+                            if (err) {
+                                console.log('err');
+                                return reject(err);
+                            }
+                            console.log(results);
+                            checkChangesToDb(results, resolve, reject);
+                        })
+                    })
+    })
+}
+
 //do something when app is closing
 process.on('exit', shutdown);
 
@@ -381,5 +411,6 @@ module.exports = {
     deleteAgent,
     changeAvailability,
     incrementCount,
-    routeForAgent
+    routeForAgent,
+    rateAgent
 };

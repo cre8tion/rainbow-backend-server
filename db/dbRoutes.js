@@ -86,6 +86,21 @@ router.get('/route/', async(req, res, next) => {
     }
 })
 
+/* FEEDBACK ENDPOINT */
+
+router.put('/agent/:rainbow_id/rating/:rating', async(req, res, next) => {
+    try {
+        let rainbow_id = req.params.rainbow_id;
+        let rating = req.params.rating;
+
+        let results = await db.rateAgent(rainbow_id, rating);
+        successHandler(res, results, "success");
+    } catch(e) {
+        console.log(e);
+        next(new DefaultError(e));
+    }
+});
+
 
 /* ADMINISTRATIVE FUNCTIONS:
 * VIEW AGENT
