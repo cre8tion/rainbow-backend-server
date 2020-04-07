@@ -1,7 +1,7 @@
 const request = require('supertest');
 
-/*
- Start Server before running ANY tests (If not called by npm run ci)
+/**
+ * Start Server before running ANY tests (If not called by npm run ci)
  */
 
 describe('API Integration Tests:', () => {
