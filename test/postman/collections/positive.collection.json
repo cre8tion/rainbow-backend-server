@@ -157,8 +157,6 @@
 									"})",
 									"",
 									"var tempData = pm.variables.get(\"tempData\");",
-									"console.log(jsonData[\"data\"]);",
-									"console.log(tempData);",
 									"var count = 0;",
 									"for (var i in jsonData[\"data\"]) {",
 									"    var agent = jsonData[\"data\"][i];",
@@ -166,8 +164,6 @@
 									"    for (var j in tempData) {",
 									"        var agentOld = tempData[j];",
 									"        if (agent.agent_id == agentOld.agent_id) {",
-									"            console.log(count);",
-									"            console.log(agent.agent_id);",
 									"            count++;",
 									"            have = true;",
 									"            break;",
@@ -178,8 +174,7 @@
 									"        break;",
 									"    }",
 									"}",
-									"pm.variables.set(\"rainbow_id\", newAgent);",
-									"console.log(\"rainbow_id is \" + newAgent);"
+									"pm.variables.set(\"rainbow_id\", newAgent);"
 								],
 								"type": "text/javascript"
 							}
@@ -352,7 +347,6 @@
 									"pm.test(\"Test for Single Agent's Info has been changed\", function() {",
 									"    var pass = false;",
 									"    for (var key in compareJSON) {",
-									"        console.log(jsonData.data[key]);",
 									"        if (jsonData.data[key] != compareJSON[key]) {",
 									"            pass = true;",
 									"        }",
@@ -524,7 +518,6 @@
 									"",
 									"// for (var key in details) {",
 									"//     for (var innerKey in details[key]) {",
-									"//         console.log(innerKey);",
 									"//         if (details[key][innerKey] == 1) {",
 									"//             routeFiltersArray.push(innerKey);",
 									"//         }",
@@ -537,9 +530,7 @@
 									"//         }",
 									"//     }",
 									"// }",
-									"// console.log(routeFiltersArray);",
 									"// var routeFilters = routeFiltersArray.join(\"+\");",
-									"// console.log(routeFilters);",
 									"// pm.variables.set(\"routeFilters\", routeFilters);",
 									""
 								],
