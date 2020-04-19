@@ -12,7 +12,8 @@ public class HttpRequest {
   // public static JSONObject request(String requestMethod, String urlString, String jsonInput)
   public static JSONObject request(String requestMethod, String urlAddon)
       throws IOException {
-    String urlString = "https://sheltered-journey-07706.herokuapp.com" + urlAddon;
+    String urlString = "http://localhost:3000" + urlAddon;
+    // String urlString = "https://sheltered-journey-07706.herokuapp.com" + urlAddon;
     URL url = new URL(urlString);
     HttpURLConnection con = (HttpURLConnection) url.openConnection();
     con.setRequestMethod(requestMethod);

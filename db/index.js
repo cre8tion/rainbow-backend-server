@@ -87,68 +87,81 @@ let query = (keyTerm) => {
 };
 
 
-let filterAgents = (filters) => {
+let filterAgents = (connection, filters) => {
     return new Promise((resolve, reject) => {
 
         var filterArray = [];
         for (var i in filters) {
             console.log(filters[i]);
-            filterArray.push(`${pool.escapeId(filters[i])} = 1`);
+            filterArray.push(`${mysql.escapeId(filters[i])} = 1`);
         }
         let q = `SELECT * FROM (
                     SELECT * FROM agent
                     LEFT JOIN languages USING(agent_id)
-                    LEFT JOIN skills USING(agent_id)) A
+                    LEFT JOIN skills USING(agent_id)
+                    FOR UPDATE) A
                 WHERE availability = 1 AND ${filterArray.join(' AND ')}
-                ORDER BY count ASC;`;
-        pool.query(q, (err, results) => {
+                ORDER BY count ASC
+                FOR UPDATE;`;
+        connection.query(q, (err, results) => {
                     if (err) {
                         console.log('err');
-                        return reject(err);
+                        connection.rollback(() => {
+                            connection.release();
+                            return reject(err);
+                        });
                     }
-
                     return resolve(results);
         });
     })
 };
 
-let freeAgents = () => {
+let freeAgents = (connection) => {
     return new Promise((resolve, reject) => {
 
         let q = `SELECT * FROM (
                     SELECT * FROM agent
                     LEFT JOIN languages USING(agent_id)
-                    LEFT JOIN skills USING(agent_id)) A
+                    LEFT JOIN skills USING(agent_id)
+                    FOR UPDATE) A
                 WHERE availability = 1
-                ORDER BY count ASC;`;
-        pool.query(q, (err, results) => {
+                ORDER BY count ASC
+                FOR UPDATE;`;
+        connection.query(q, (err, results) => {
                     if (err) {
                         console.log('err');
-                        return reject(err);
+                        connection.rollback(() => {
+                            connection.release();
+                            return reject(err);
+                        })
                     }
-
                     return resolve(results);
         });
     })
 };
 
-let checkIfBusyAgent = (filters) => {
+let checkIfBusyAgent = (connection, filters) => {
     return new Promise((resolve, reject) => {
 
         var filterArray = [];
         for (var i in filters) {
             console.log(filters[i]);
-            filterArray.push(`${pool.escapeId(filters[i])} = 1`);
+            filterArray.push(`${mysql.escapeId(filters[i])} = 1`);
         }
         let q = `SELECT * FROM (
                     SELECT * FROM agent
                     LEFT JOIN languages USING(agent_id)
-                    LEFT JOIN skills USING(agent_id)) A
-                WHERE availability = 2 AND ${filterArray.join(' AND ')};`;
-        pool.query(q, (err, results) => {
+                    LEFT JOIN skills USING(agent_id)
+                    FOR UPDATE) A
+                WHERE availability = 2 AND ${filterArray.join(' AND ')}
+                FOR UPDATE;`;
+        connection.query(q, (err, results) => {
                     if (err) {
                         console.log('err');
-                        return reject(err);
+                        connection.rollback(() => {
+                            connection.release();
+                            return reject(err);
+                        });
                     }
                     if (results[0] == null) return resolve(false);
                     else return resolve(true);
@@ -157,35 +170,90 @@ let checkIfBusyAgent = (filters) => {
 
 }
 
-let routeForAgent = async (filters) => {
-    if (filters[0] == null) {
-        console.log("empty filters")
-        var suitableAgents = await freeAgents();
-    } else {
-        var suitableAgents = await filterAgents(filters);
+let helperForRouting = async (err, connection, filters) => {
+    if (err) { // Transaction error
+        connection.rollback(() => {
+            connection.release();
+        });
     }
-    console.log(suitableAgents);
-    if (suitableAgents.length == 0) {
-        if (await checkIfBusyAgent(filters)) {
-            let resJson = {
-                status: 2
-            }
-            return resJson
-        } else {
-            let resJson = {
-                status: 0
-            }
-            return resJson
+    else {
+        if (filters[0] == null) {
+            console.log("empty filters");
+            var suitableAgents = await freeAgents(connection);
         }
+        else {
+            var suitableAgents = await filterAgents(connection, filters);
+        }
+        console.log(suitableAgents);
+        if (suitableAgents.length == 0) {
+            if (await checkIfBusyAgent(connection, filters)) {
+                console.log("connection released");
+                connection.commit(() => {
+                    if (err) {
+                        connection.rollback(() => {
+                            connection.release();
+                        });
+                    }
+                    else {
+                        connection.release();
+                    }
+                });
+                var resJson = {
+                    status: 2
+                };
+                return resJson
+            }
+            else {
+                console.log("connection released");
+                connection.commit(() => {
+                    if (err) {
+                        connection.rollback(() => {
+                            connection.release();
+                        });
+                    }
+                    else {
+                        connection.release();
+                    }
+                });
+                var resJson = {
+                    status: 0
+                };
+                return resJson
+            }
+        }
+        let selectedAgent = suitableAgents[0].agent_id;
+        await changeAvailability(selectedAgent, 2, connection);
+        await incrementCount(connection, selectedAgent);
+        console.log("connection released");
+        connection.commit(() => {
+            if (err) {
+                connection.rollback(() => {
+                    connection.release();
+                });
+            }
+            else {
+                connection.release();
+            }
+        });
+        var resJson = {
+            selectedAgent: selectedAgent,
+            status: 1
+        };
+        return resJson;
     }
-    let selectedAgent = suitableAgents[0].agent_id;
-    changeAvailability(selectedAgent,2);
-    incrementCount(selectedAgent);
-    let resJson = {
-        selectedAgent: selectedAgent,
-        status: 1
-    }
-    return resJson;
+}
+
+let routeForAgent = async (filters) => {
+    return new Promise((resolve, reject) => {
+        pool.getConnection((err, connection) => {
+            connection.beginTransaction(async (err) => {
+                if (err) {
+                    reject(err);
+                }
+                resolve(helperForRouting(err, connection, filters));
+            });
+        });
+    })
 };
 
 
@@ -291,34 +359,53 @@ let updateAgentDetails = (toBeChangedJson) => {
     })
 };
 
-let changeAvailability = (rainbow_id, availability) => {
+let changeAvailability = (rainbow_id, availability, connection) => {
+    if (typeof connection === "undefined") {
+        var transaction = false;
+    } else {
+        var transaction = true;
+    }
     return new Promise((resolve, reject) => {
         let q = `UPDATE agent SET availability = ? WHERE agent_id = ?;`;
         let inserts = [availability, rainbow_id];
         q = mysql.format(q, inserts);
-        pool.query(q, (err, results) => {
-                        if (err) {
-                            console.log('err');
-                            return reject(err);
-                        }
-                        console.log(results);
-                        checkChangesToDb(results, resolve, reject);
+        if (transaction == true) {
+            connection.query(q, (err, results) => {
+                if (err) {
+                    console.log('err');
+                    connection.rollback(() => {
+                        connection.release();
+                        return reject(err);
                     });
+                }
+                checkChangesToDb(results, resolve, reject);
+            });
+        } else {
+            pool.query(q, (err, results) => {
+                            if (err) {
+                                console.log('err');
+                                return reject(err);
+                            }
+                            console.log(results);
+                            checkChangesToDb(results, resolve, reject);
+                        });
+        }
     })
 };
 
-let incrementCount = (rainbow_id) => {
+let incrementCount = (connection, rainbow_id) => {
     return new Promise((resolve, reject) => {
-        let q = `SELECT count FROM agent WHERE agent_id = ?;`;
+        let q = `SELECT count FROM agent WHERE agent_id = ?
+                 FOR UPDATE;`;
         let inserts = [rainbow_id];
         q = mysql.format(q, inserts);
-        pool.query(q, (err, countResults) => {
+        connection.query(q, (err, countResults) => {
                         if (err || countResults[0] == null) {
                             console.log('err');
                             return reject(err);
                         }
                         console.log(countResults[0].count);
-                        pool.query(`UPDATE agent SET count = ${countResults[0].count+1} WHERE agent_id = "${rainbow_id}";`,
+                        connection.query(`UPDATE agent SET count = ${countResults[0].count+1} WHERE agent_id = "${rainbow_id}";`,
                         (err, results) => {
                             if (err) {
                                 console.log('err');

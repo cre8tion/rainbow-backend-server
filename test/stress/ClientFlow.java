@@ -54,7 +54,7 @@ public class ClientFlow implements Runnable{
 
     public void run() {
         try {
-            generateGuestAccount();
+            // generateGuestAccount();
             String routeFilters = "english";
             System.out.println("Client " + threadNo + " has filters: " + routeFilters);
             int status = callRoutingEngine(routeFilters);
@@ -63,12 +63,15 @@ public class ClientFlow implements Runnable{
                 MainTest.effectiveThreads.decrementAndGet();
             } else {
                 while (status != 1) {
-                    System.out.println("Client " + threadNo + " is waiting for a suitable agent to be available");
-                    Thread.sleep(1000);
+                    // System.out.println("Client " + threadNo + " is waiting for a suitable agent to be available");
+                    Thread.sleep(1000);         // Polling interval
                     status = callRoutingEngine(routeFilters);
                 }
                 System.out.println("Agent " + selectedAgent + " service request from client " + threadNo + " for 2 seconds");
-                Thread.sleep(5000);
+                // double duration = ((double)Math.round((System.nanoTime() - MainTest.prevTime)/1000000000*100))/100;
+                // MainTest.prevTime = System.nanoTime();
+                // System.out.println("Time from previous request: " + duration);
+                Thread.sleep(2000);             // simulated request duration
                 changeAvailability(selectedAgent);
             }
         } catch (Exception e) {
