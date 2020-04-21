@@ -1,0 +1,112 @@
+[
+    {
+        "personalInfo": {
+            "firstname": "Walter",
+            "lastname": "Hill",
+            "email": "Walter_Hill@charter.org"
+        },
+        "details": {
+            "languages": {
+                "english": 1,
+                "chinese": 1,
+                "malay": 0
+            },
+            "skills": {
+                "insurance": 1,
+                "bank_statement": 1,
+                "fraud": 0
+            }
+        },
+        "availability": 1,
+        "password": "L+t$95o0BWu^5EbgiYYoOja",
+        "routeFilters": "english+malay+insurance+chinese"
+    },
+    {
+        "personalInfo": {
+            "firstname": "Barbara",
+            "lastname": "Vigil",
+            "email": "BarbaraVigil@yahoo.net"
+        },
+        "details": {
+            "languages": {
+                "english": 1,
+                "chinese": 1,
+                "malay": 1
+            },
+            "skills": {
+                "insurance": 1,
+                "bank_statement": 0,
+                "fraud": 1
+            }
+        },
+        "availability": 1,
+        "password": "rEfVLK0=nc",
+        "routeFilters": "malay+chinese"
+    },
+    {
+        "personalInfo": {
+            "firstname": "Mickey",
+            "lastname": "Allen",
+            "email": "MickeyAllen@comcast.gov"
+        },
+        "details": {
+            "languages": {
+                "english": 1,
+                "chinese": 0,
+                "malay": 0
+            },
+            "skills": {
+                "insurance": 1,
+                "bank_statement": 0,
+                "fraud": 0
+            }
+        },
+        "availability": 1,
+        "password": "@Btr5vFp2=k1e2FiRwbumtN5&NG7tIAuF1&$EvI2evtcYTGgi",
+        "routeFilters": "insurance"
+    },
+    {
+        "personalInfo": {
+            "firstname": "Marilyn",
+            "lastname": "Alonzo",
+            "email": "MarilynAlonzo@hotmail.gov"
+        },
+        "details": {
+            "languages": {
+                "english": 1,
+                "chinese": 0,
+                "malay": 1
+            },
+            "skills": {
+                "insurance": 1,
+                "bank_statement": 1,
+                "fraud": 1
+            }
+        },
+        "availability": 1,
+        "password": "ZmmAsanj5zvNrBGEgqZUCMEMuH$^$G1BQ+J+",
+        "routeFilters": "insurance+insurance+insurance+bank_statement"
+    },
+    {
+        "personalInfo": {
+            "firstname": "Beverly",
+            "lastname": "Demmons",
+            "email": "Beverly.Demmons@outlook.org"
+        },
+        "details": {
+            "languages": {
+                "english": 1,
+                "chinese": 1,
+                "malay": 1
+            },
+            "skills": {
+                "insurance": 1,
+                "bank_statement": 0,
+                "fraud": 1
+            }
+        },
+        "availability": 1,
+        "password": "Qqau6E@Uc8QwjNYvMxqbZJ=G9bypvpPGS#$L@ci3+UXv8A5",
+        "routeFilters": "malay+english+insurance+english+insurance+fraud"
+    }
+]

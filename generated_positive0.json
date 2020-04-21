@@ -1,0 +1,112 @@
+[
+    {
+        "personalInfo": {
+            "firstname": "Junior",
+            "lastname": "Daigle",
+            "email": "JuniorDaigle@hotmail.com"
+        },
+        "details": {
+            "languages": {
+                "english": 1,
+                "chinese": 0,
+                "malay": 1
+            },
+            "skills": {
+                "insurance": 1,
+                "bank_statement": 0,
+                "fraud": 0
+            }
+        },
+        "availability": 1,
+        "password": "wGf2W14ekjexdI^1A4QpVnu3pO6Njk",
+        "routeFilters": "fraud+fraud+bank_statement+fraud"
+    },
+    {
+        "personalInfo": {
+            "firstname": "Robert",
+            "lastname": "Henderson",
+            "email": "Robert_Henderson@yahoo.net"
+        },
+        "details": {
+            "languages": {
+                "english": 1,
+                "chinese": 1,
+                "malay": 0
+            },
+            "skills": {
+                "insurance": 1,
+                "bank_statement": 1,
+                "fraud": 0
+            }
+        },
+        "availability": 1,
+        "password": "GJY7#6q7eUnaac",
+        "routeFilters": "insurance+fraud+english+malay"
+    },
+    {
+        "personalInfo": {
+            "firstname": "Cory",
+            "lastname": "Minor",
+            "email": "Cory.Minor@charter.net"
+        },
+        "details": {
+            "languages": {
+                "english": 1,
+                "chinese": 1,
+                "malay": 0
+            },
+            "skills": {
+                "insurance": 1,
+                "bank_statement": 1,
+                "fraud": 0
+            }
+        },
+        "availability": 1,
+        "password": "h&1k6S=0Ow90zWw1+6wzaz$K8h^jg&D=8p8v7AT%au&aBY%di1iie87=QQGb+OV3",
+        "routeFilters": "malay+fraud+english+fraud"
+    },
+    {
+        "personalInfo": {
+            "firstname": "Katelyn",
+            "lastname": "Porter",
+            "email": "Katelyn.Porter@charter.gov"
+        },
+        "details": {
+            "languages": {
+                "english": 0,
+                "chinese": 1,
+                "malay": 0
+            },
+            "skills": {
+                "insurance": 1,
+                "bank_statement": 1,
+                "fraud": 1
+            }
+        },
+        "availability": 1,
+        "password": "JzqNL2#lPPRdzZrrqra%^n+vFhgNsh%FDnC42v=2$0RB35JKu^RW",
+        "routeFilters": "chinese+english+chinese"
+    },
+    {
+        "personalInfo": {
+            "firstname": "Gerald",
+            "lastname": "Miller",
+            "email": "Gerald_Miller@charter.gov"
+        },
+        "details": {
+            "languages": {
+                "english": 0,
+                "chinese": 0,
+                "malay": 1
+            },
+            "skills": {
+                "insurance": 0,
+                "bank_statement": 1,
+                "fraud": 0
+            }
+        },
+        "availability": 1,
+        "password": "Y03skcjjxDQUhYsOmB1whjB%UcD7vC1ZHFb#kmbcN6xPrvt",
+        "routeFilters": "malay+insurance"
+    }
+]

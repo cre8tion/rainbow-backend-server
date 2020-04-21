@@ -100,4 +100,4 @@ def fuzz(n, threads):
 
 
 if __name__ == "__main__":
-	fuzz(100, 10)
+	fuzz(5, 2)

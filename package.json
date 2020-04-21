@@ -14,7 +14,7 @@
     "test-it": "jest test/integration/api.test.js",
     "test": "jest test/unit/* --verbose",
     "newman-db": "newman run ./test/postman/collections/db_test.collection.json -d ./test/postman/input/positive_input.json -e ./test/postman/variables/custom.env.json -g ./test/postman/variables/globals.json",
-    "newman-positive": "newman run ./test/postman/collections/positive.collection.json -d ./test/postman/input/positive_input.json -e ./test/postman/variables/custom.env.json -g ./test/postman/variables/globals.json",
+    "newman-positive": "newman run ./test/postman/collections/positive.collection.json -d ./test/postman/input/generated_positive0.json -e ./test/postman/variables/custom.env.json -g ./test/postman/variables/globals.json",
     "newman-negative": "newman run ./test/postman/collections/negative.collection.json -d ./test/postman/input/negative_input.json -e ./test/postman/variables/custom.env.json -g ./test/postman/variables/globals.json"
   },
   "dependencies": {
